@@ -5,11 +5,11 @@ import winsound
 
 
 def write_error(message):
-    with open('D:\\TOSS_SDO\\CorpLight\\Check\\error.txt', 'w', encoding='utf-8') as no:
+    with open('D:\\TOSS_SDO\\Corp2\\Check\\error.txt', 'w', encoding='utf-8') as no:
         no.write(message)
 
 
-file_source = 'D:\\TOSS_SDO\\CorpLight\\logs\\' + logfilestr
+file_source = 'D:\\TOSS_SDO\\Corp2\\logs\\' + logfilestr
 if not os.path.exists(file_source):
     print('Log file does not exists!')
     write_error('Log file does not exists!')
@@ -17,7 +17,7 @@ if not os.path.exists(file_source):
     duration = 2000
     winsound.Beep(frequency, duration)
     sys.exit()
-file_target = 'D:\\TOSS_SDO\\CorpLight\\Check\\' + logfilestr
+file_target = 'D:\\TOSS_SDO\\Corp2\\Check\\' + logfilestr
 logfilestrcheck = shutil.copy2(file_source, file_target)
 with open(logfilestrcheck, 'r', encoding='utf-8') as log:
     for line in log:
