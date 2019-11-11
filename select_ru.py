@@ -11,13 +11,20 @@ scroll.pack(side=LEFT, fill=Y)
 lbox_left.config(yscrollcommand=scroll.set)
 
 def to_right():
-    print('lbox_left.curselection()', lbox_left.curselection(), 'lbox_left.get(lbox_left.curselection())', lbox_left.get(lbox_left.curselection()))
-    right_lbox.insert(END, lbox_left.get(lbox_left.curselection()))
-    lbox_left.delete(lbox_left.curselection())
+    select = list(lbox_left.curselection())
+    for item in select:
+        right_lbox.insert(END, lbox_left.get(item))
+    select.reverse()
+    for item in select:
+        lbox_left.delete(item)
 
 def back():
-    lbox_left.insert(END, right_lbox.curselection())
-    right_lbox.delete(right_lbox.curselection())
+    select = list(right_lbox.curselection())
+    for item in select:
+        lbox_left.insert(END, right_lbox.get(item))
+    select.reverse()
+    for item in select:
+        right_lbox.delete(item)
 
 f = Frame()
 f.pack(side=LEFT, padx=10)
