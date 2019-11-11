@@ -1,5 +1,6 @@
 from tkinter import *
-from config import rushki
+from config import rushki, ru_dic
+import os
 
 root = Tk()
 root.title("Выбор РУ")
@@ -17,6 +18,7 @@ def to_right():
     select.reverse()
     for item in select:
         lbox_left.delete(item)
+    error_label['text'] = ''
 
 def back():
     select = list(right_lbox.curselection())
@@ -26,6 +28,27 @@ def back():
     for item in select:
         right_lbox.delete(item)
 
+def email():
+    if right_lbox.get(END) == '':
+        error_label['text'] = 'Не выбраны области!'
+    else:
+        error_label['text'] = ''
+        list_mfo = []
+        for item in right_lbox.get(0, END):
+            list_mfo.append(ru_dic[item])
+        #os.system('powershell D:/Work/Py3proj/TK/tk1/tk1/sendlong.ps1 '+ list_mfo[0])
+        import win32com.client as win32
+        #  Зайдите в папку C:\Python32\Lib\site-packages\pywin32_system32 и скопируйте оттуда 2 файла (pywintypes32.dll и pythoncom32.dll) в папку C:\Python32\Lib\site-packages\win32.
+        outlook = win32.Dispatch('outlook.application')
+        mail = outlook.CreateItem(0)
+        mail.To = 'jove@ukr.net'
+        mail.Subject = '!!'
+        mail.HTMLBody = '<h2>Hello!</h2>'
+        # attachment = 'Path'
+        # mail.Attachments.Add(attachment)
+
+        mail.Display()
+
 f = Frame()
 f.pack(side=LEFT, padx=10)
 #entry = Entry(f)
@@ -33,7 +56,12 @@ f.pack(side=LEFT, padx=10)
 to_right_button = Button(f, text=">>>", command=to_right)
 to_right_button.pack(fill=X)
 back_button = Button(f, text="<<<", command=back)
-back_button.pack(fill=X)
+back_button.pack(fill=X, pady=10)
+email_button = Button(f, text="Отправить почту по автопереоформлению вкладов", command=email)
+email_button.pack(fill=X, pady=20)
+
+error_label = Label(f, text="")
+error_label.pack(fill=X, pady=10)
 
 fr = Frame()
 fr.pack(side=LEFT, padx=10)
