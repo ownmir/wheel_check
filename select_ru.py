@@ -1,5 +1,5 @@
 from tkinter import *
-from config import rushki, ru_dic
+from config import rushki, ru_dic, ru_dic_of
 import os
 
 root = Tk()
@@ -42,8 +42,14 @@ def email():
         outlook = win32.Dispatch('outlook.application')
         mail = outlook.CreateItem(0)
         mail.To = 'jove@ukr.net'
-        mail.Subject = '!!'
-        mail.HTMLBody = '<h2>Hello!</h2>'
+        text_ru = ''
+        for item in right_lbox.get(0, END):
+            text_ru += ru_dic_of[item]
+            text_ru += ', '
+        text_ru = text_ru.rstrip(', ')
+        mail.Subject = 'Повідомлення для здійснення процедури автолонгації  по: ' + text_ru
+        mail.HTMLBody = '<h3>Доброго дня!</h3><br>Процедура «Автопереоформлення вкладів» по: <strong>' + text_ru + '</strong> виконана.<br><br>'
+        inspector = mail.GetInspector
         # attachment = 'Path'
         # mail.Attachments.Add(attachment)
 
