@@ -1,11 +1,10 @@
-Learn more or give us feedback
 from tkinter import *
 from _tkinter import TclError
 from config import rushki, ru_dic, ru_dic_of, to, write_to_clipboard
 import os, glob
 import argparse
 import getpass
-import keyring
+# import keyring 
 import time
 
 def tick():
@@ -191,6 +190,10 @@ def parse():
         #7 print(clip)
         
 
+def main_create_json():
+    pass
+
+
 f = Frame()
 f.pack(side=LEFT, padx=10)
 #entry = Entry(f)
@@ -217,6 +220,10 @@ list_mfo_entry = Entry(f, justify='center')
 list_mfo_entry.insert(0, '')
 list_mfo_entry.pack(fill=X, pady=5)
 
+date_label = Label(f, text="Date")
+date_enter = Entry(f, justify='center')
+date_label.pack(fill=X, pady=5)
+date_enter.pack(fill=X, pady=5)
 error_label = Label(f, text="")
 error_label.pack(fill=X, pady=10)
 
