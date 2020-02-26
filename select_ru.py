@@ -1,15 +1,16 @@
 from tkinter import *
 from _tkinter import TclError
 from config import rushki, ru_dic, ru_dic_of, to, write_to_clipboard
-import os, glob
-import argparse
+import os, glob, pickle
+# import argparse
 import getpass
 # import keyring 
 import time
+from tkcalendar import Calendar, DateEntry
 
 def tick():
     root.after(200, tick)
-    root.title("Выбор РУ версия 0.2 " + time.strftime('%H:%M:%S')) 
+    root.title("Выбор РУ версия 0.3 " + time.strftime('%H:%M:%S'))
 
 root = Tk()
 # root.title("Выбор РУ")
@@ -20,15 +21,24 @@ lbox_left.pack(side=LEFT)
 scroll = Scrollbar(command=lbox_left.yview)
 scroll.pack(side=LEFT, fill=Y)
 lbox_left.config(yscrollcommand=scroll.set)
+for_duty ={}
 
 def to_right():
-    select = list(lbox_left.curselection())
-    for item in select:
-        right_lbox.insert(END, lbox_left.get(item))
-    select.reverse()
-    for item in select:
-        lbox_left.delete(item)
-    error_label['text'] = ''
+    if django_user_entry.get() == '':
+        error_label['text'] = 'Не заполнено поле "Пользователь дежурства"'
+    else:
+        select = list(lbox_left.curselection())
+        for_duty['rues'] = select
+        for_duty['user'] = django_user_entry.get()
+        for_duty['date'] = date_entry.get_date()
+        with open(for_duty['user'] + '.pickle', 'wb') as file_for_duty:
+            pickle.dump(for_duty, file_for_duty)
+        for item in select:
+            right_lbox.insert(END, lbox_left.get(item))
+        select.reverse()
+        for item in select:
+            lbox_left.delete(item)
+        error_label['text'] = ''
 
 def back():
     select = list(right_lbox.curselection())
@@ -220,10 +230,18 @@ list_mfo_entry = Entry(f, justify='center')
 list_mfo_entry.insert(0, '')
 list_mfo_entry.pack(fill=X, pady=5)
 
-date_label = Label(f, text="Date")
-date_enter = Entry(f, justify='center')
+date_label = Label(f, text="Дата для дежурства")
+date_entry = DateEntry(f, justify='center', locale='uk_UA')
+# print('type(date_entry)', type(date_entry))
 date_label.pack(fill=X, pady=5)
-date_enter.pack(fill=X, pady=5)
+date_entry.pack(fill=X, pady=5)
+django_user_label = Label(f, text="Пользователь дежурства")
+django_user_entry = Entry(f, justify='center')
+django_user_entry.insert(0, getpass.getuser())
+# print(getpass.getuser())
+django_user_label.pack(fill=X, pady=5)
+django_user_entry.pack(fill=X, pady=5)
+
 error_label = Label(f, text="")
 error_label.pack(fill=X, pady=10)
 
