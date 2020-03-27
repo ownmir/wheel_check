@@ -1,6 +1,5 @@
 import os
 import stat
-import pickle
 import shutil
 from Cryptodome.Cipher import DES
 import zipfile
@@ -74,7 +73,7 @@ def copy2(src, dst, *, follow_symlinks=True):
     if os.path.isdir(dst):
         dst = os.path.join(dst, os.path.basename(src))
     copyfile(src, dst, follow_symlinks=follow_symlinks)
-    #copystat(src, dst, follow_symlinks=follow_symlinks)
+    shutil.copystat(src, dst, follow_symlinks=follow_symlinks)
     return dst
 
 
@@ -105,7 +104,7 @@ def to(src, dst, symlinks=False, ignore=None, copy_function=copy2,
                     # code with a custom `copy_function` may rely on copytree
                     # doing the right thing.
                     os.symlink(linkto, dstname)
-                    # shutil.copystat(srcname, dstname, follow_symlinks=not symlinks)
+                    shutil.copystat(srcname, dstname, follow_symlinks=not symlinks)
                 else:
                     # ignore dangling symlink if the flag is on
                     if not os.path.exists(linkto) and ignore_dangling_symlinks:
@@ -133,12 +132,12 @@ def to(src, dst, symlinks=False, ignore=None, copy_function=copy2,
             errors.extend(err.args[0])
         except OSError as why:
             errors.append((srcname, dstname, str(why)))
-        # try:
-        #     shutil.copystat(src, dst)
-        # except OSError as why:
-        #     # Copying file access times may fail on Windows
-        #     if getattr(why, 'winerror', None) is None:
-        #         errors.append((src, dst, str(why)))
+        try:
+            shutil.copystat(src, dst)
+        except OSError as why:
+            # Copying file access times may fail on Windows
+            if getattr(why, 'winerror', None) is None:
+                errors.append((src, dst, str(why)))
         if errors:
             raise Error(errors)
     return

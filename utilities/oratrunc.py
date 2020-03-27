@@ -9,7 +9,7 @@ class ModeError(Exception):
 
 def oracle_trunc(current, mode):
     if mode == 'DAY':
-        num_week_day = now.isoweekday()
+        num_week_day = current.isoweekday()
         if num_week_day == 1:
             return current
         elif num_week_day == 2:
@@ -33,7 +33,7 @@ def oracle_trunc(current, mode):
 
 def oracle_addition(current, mode):
     if mode == 'DAY':
-        num_week_day = now.isoweekday()
+        num_week_day = current.isoweekday()
         if num_week_day == 1:
             return current + datetime.timedelta(days=6)
         elif num_week_day == 2:
