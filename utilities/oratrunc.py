@@ -30,7 +30,6 @@ def oracle_trunc(current, mode):
         raise ModeError('Unknown mode!')
 
 
-
 def oracle_addition(current, mode):
     if mode == 'DAY':
         num_week_day = current.isoweekday()
