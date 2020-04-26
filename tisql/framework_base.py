@@ -30,10 +30,10 @@ class Main(QMainWindow):
         splitter_horizontal.addWidget(top)
         
         splitter_vertical = QSplitter(Qt.Vertical)
-        
+
+        splitter_horizontal.addWidget(splitter_vertical)
         splitter_vertical.addWidget(bottom_left)
         splitter_vertical.addWidget(bottom_right)
-        splitter_vertical.addWidget(splitter_horizontal)
         
 
         hbox.addWidget(splitter_vertical)
