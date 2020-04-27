@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QTextEdit, QAction, QHBoxLayout, QFrame, QSplitter
+from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QAction, QVBoxLayout, QHBoxLayout, QPushButton, QSplitter, QTableWidget, QTableWidgetItem, QTextEdit
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
@@ -17,27 +17,54 @@ class Main(QMainWindow):
         
         central_widget = QWidget(self)                  # Создаём центральный виджет
         self.setCentralWidget(central_widget)
-        hbox = QHBoxLayout(central_widget)
-        top = QFrame(central_widget)
-        top.setFrameShape(QFrame.StyledPanel)
+        okButton = QPushButton("OK")
+        cancelButton = QPushButton("Cancel")
+        vbox = QVBoxLayout(central_widget)
+        top = QTextEdit()
+        # top.setFrameShape(QFrame.StyledPanel)
 
-        bottom_left = QFrame(central_widget)
-        bottom_left.setFrameShape(QFrame.StyledPanel)
-        bottom_right = QFrame(central_widget)
-        bottom_right.setFrameShape(QFrame.StyledPanel)
+        # bottom = QLabel('Title')
+        bottom = QWidget(central_widget)
+        grid_layout = QGridLayout()             # Создаём QGridLayout
+        bottom.setLayout(grid_layout)
+        table = QTableWidget(self)  # Создаём таблицу
+        table.setColumnCount(3)  # Устанавливаем три колонки
+        table.setRowCount(1)  # и одну строку в таблице
 
-        splitter_horizontal = QSplitter(Qt.Horizontal)
-        splitter_horizontal.addWidget(top)
-        
+        # Устанавливаем заголовки таблицы
+        table.setHorizontalHeaderLabels(["Header 1", "Header 2", "Header 3"])
+
+        # Устанавливаем всплывающие подсказки на заголовки
+        table.horizontalHeaderItem(0).setToolTip("Column 1 ")
+        table.horizontalHeaderItem(1).setToolTip("Column 2 ")
+        table.horizontalHeaderItem(2).setToolTip("Column 3 ")
+
+        # Устанавливаем выравнивание на заголовки
+        table.horizontalHeaderItem(0).setTextAlignment(Qt.AlignLeft)
+        table.horizontalHeaderItem(1).setTextAlignment(Qt.AlignHCenter)
+        table.horizontalHeaderItem(2).setTextAlignment(Qt.AlignRight)
+
+        # заполняем первую строку
+        table.setItem(0, 0, QTableWidgetItem("Text in column 1"))
+        table.setItem(0, 1, QTableWidgetItem("Text in column 2"))
+        table.setItem(0, 2, QTableWidgetItem("Text in column 3"))
+
+        # делаем ресайз колонок по содержимому
+        table.resizeColumnsToContents()
+
+        grid_layout.addWidget(table, 0, 0)  # Добавляем таблицу в сетку
+
         splitter_vertical = QSplitter(Qt.Vertical)
+        splitter_vertical.addWidget(top)
+        splitter_vertical.addWidget(bottom)
 
-        splitter_horizontal.addWidget(splitter_vertical)
-        splitter_vertical.addWidget(bottom_left)
-        splitter_vertical.addWidget(bottom_right)
-        
-
-        hbox.addWidget(splitter_vertical)
-        central_widget.setLayout(hbox)
+        vbox.addWidget(splitter_vertical)
+        hbox = QHBoxLayout(central_widget)
+        hbox.addWidget(okButton)
+        hbox.addWidget(cancelButton)
+        hbox.addStretch(1)
+        vbox.addLayout(hbox)
+        central_widget.setLayout(vbox)
 
         
         # QAction является абстракцией для действий, совершенных из меню, панели инструментов, или комбинаций клавиш. 
