@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QAction, QVBoxLayout, QHBoxLayout, QPushButton, QSplitter, QTableWidget, QTableWidgetItem, QTextEdit
+from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QAction, QVBoxLayout, QHBoxLayout
+from PyQt5.QtWidgets import QTabWidget, QPushButton, QSplitter, QTableWidget, QTableWidgetItem, QTextEdit
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 
@@ -11,7 +12,6 @@ class Main(QMainWindow):
         
         self.init_ui()
         
-
     def init_ui(self):
         # textEdit = QTextEdit()
         
@@ -20,7 +20,14 @@ class Main(QMainWindow):
         okButton = QPushButton("OK")
         cancelButton = QPushButton("Cancel")
         vbox = QVBoxLayout(central_widget)
-        top = QTextEdit()
+
+        top = QTabWidget(central_widget)
+        text_edit1 = QTextEdit()
+        tab1 = top.addTab(text_edit1, "Tab1")
+        print('tab1', tab1, 'type(tab1)', type(tab1))
+        text_edit2 = QTextEdit()
+        tab2 = top.addTab(text_edit2, "Tab2")
+        print('tab2', tab2, 'type(tab1)', type(tab2))
         # top.setFrameShape(QFrame.StyledPanel)
 
         # bottom = QLabel('Title')
