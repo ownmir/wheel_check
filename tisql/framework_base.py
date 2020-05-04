@@ -31,9 +31,11 @@ class Main(QMainWindow):
         # top.setFrameShape(QFrame.StyledPanel)
 
         # bottom = QLabel('Title')
-        bottom = QWidget(central_widget)
-        grid_layout = QGridLayout()             # Создаём QGridLayout
-        bottom.setLayout(grid_layout)
+        # bottom = QWidget(central_widget)
+        bottom = QTabWidget(central_widget)
+
+        # grid_layout = QGridLayout()             # Создаём QGridLayout
+        # bottom.setLayout(grid_layout)
         table = QTableWidget(self)  # Создаём таблицу
         table.setColumnCount(3)  # Устанавливаем три колонки
         table.setRowCount(1)  # и одну строку в таблице
@@ -58,8 +60,10 @@ class Main(QMainWindow):
 
         # делаем ресайз колонок по содержимому
         table.resizeColumnsToContents()
-
-        grid_layout.addWidget(table, 0, 0)  # Добавляем таблицу в сетку
+        bottom.addTab(table, "Result")
+        messages_text_edit = QTextEdit()
+        bottom.addTab(messages_text_edit, "Messages")
+        # grid_layout.addWidget(bottom, 0, 0)  # Добавляем таблицу в сетку
 
         splitter_vertical = QSplitter(Qt.Vertical)
         splitter_vertical.addWidget(top)
