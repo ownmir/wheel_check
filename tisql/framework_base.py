@@ -1,8 +1,9 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QMainWindow, QGridLayout, QAction, QVBoxLayout, QHBoxLayout
-from PyQt5.QtWidgets import QTabWidget, QPushButton, QSplitter, QTableWidget, QTableWidgetItem, QTextEdit
+from PyQt5.QtWidgets import QTabWidget, QPushButton, QSplitter, QTableWidget, QTableWidgetItem, QTextEdit, QLabel
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
+from database.dbfw import connect_to_base_and_execute
 
     
 class Main(QMainWindow):
@@ -11,7 +12,13 @@ class Main(QMainWindow):
         super().__init__()
         
         self.init_ui()
-        
+
+    def top_on_current_change(self, index):
+        print("Top index", index)
+
+    def bottom_on_current_change(self, index):
+        print("Bottom index", index)
+
     def init_ui(self):
         # textEdit = QTextEdit()
         
@@ -19,6 +26,7 @@ class Main(QMainWindow):
         self.setCentralWidget(central_widget)
         okButton = QPushButton("OK")
         cancelButton = QPushButton("Cancel")
+        error_label = QLabel("Errors will be here")
         vbox = QVBoxLayout(central_widget)
 
         top = QTabWidget(central_widget)
@@ -28,11 +36,9 @@ class Main(QMainWindow):
         text_edit2 = QTextEdit()
         tab2 = top.addTab(text_edit2, "Tab2")
         print('tab2', tab2, 'type(tab1)', type(tab2))
-        # top.setFrameShape(QFrame.StyledPanel)
-
-        # bottom = QLabel('Title')
-        # bottom = QWidget(central_widget)
+        top.currentChanged.connect(self.top_on_current_change)
         bottom = QTabWidget(central_widget)
+        bottom.setTabPosition(QTabWidget.South)  # внизу
 
         # grid_layout = QGridLayout()             # Создаём QGridLayout
         # bottom.setLayout(grid_layout)
@@ -63,6 +69,7 @@ class Main(QMainWindow):
         bottom.addTab(table, "Result")
         messages_text_edit = QTextEdit()
         bottom.addTab(messages_text_edit, "Messages")
+        bottom.currentChanged.connect(self.bottom_on_current_change)
         # grid_layout.addWidget(bottom, 0, 0)  # Добавляем таблицу в сетку
 
         splitter_vertical = QSplitter(Qt.Vertical)
@@ -73,6 +80,7 @@ class Main(QMainWindow):
         hbox = QHBoxLayout(central_widget)
         hbox.addWidget(okButton)
         hbox.addWidget(cancelButton)
+        hbox.addWidget(error_label)
         hbox.addStretch(1)
         vbox.addLayout(hbox)
         central_widget.setLayout(vbox)
