@@ -1,10 +1,11 @@
 
 
 def connect_to_base_and_execute(query, error_label, gui="pyqt", base="oracle"):
+    print("query", query)
     if gui == "tkinter":
         error_label['text'] = ''
     else:
-        error_label.setText("")
+        error_label.setText(query)
     try:
         if base == "oracle":
             import cx_Oracle as ora
@@ -17,7 +18,7 @@ def connect_to_base_and_execute(query, error_label, gui="pyqt", base="oracle"):
         print('Welcome to Oracle driver!')
     else:
         print('Welcome to else driver!')
-    print("query", query)
+
 
 
 if __name__ == '__main__':

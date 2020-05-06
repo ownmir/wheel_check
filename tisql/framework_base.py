@@ -6,6 +6,12 @@ from PyQt5.QtCore import Qt
 from database.dbfw import connect_to_base_and_execute
 
     
+def run(error_label):
+    print('In run')
+    print(error_label.text())
+    connect_to_base_and_execute("select * from dummy;", error_label)
+
+
 class Main(QMainWindow):
 
     def __init__(self):
@@ -24,9 +30,12 @@ class Main(QMainWindow):
         
         central_widget = QWidget(self)                  # Создаём центральный виджет
         self.setCentralWidget(central_widget)
-        okButton = QPushButton("OK")
-        cancelButton = QPushButton("Cancel")
+        ok_button = QPushButton("OK")
+
+        cancel_button = QPushButton("Cancel")
+
         error_label = QLabel("Errors will be here")
+        cancel_button.clicked.connect(lambda: run(error_label))
         vbox = QVBoxLayout(central_widget)
 
         top = QTabWidget(central_widget)
@@ -78,8 +87,8 @@ class Main(QMainWindow):
 
         vbox.addWidget(splitter_vertical)
         hbox = QHBoxLayout(central_widget)
-        hbox.addWidget(okButton)
-        hbox.addWidget(cancelButton)
+        hbox.addWidget(ok_button)
+        hbox.addWidget(cancel_button)
         hbox.addWidget(error_label)
         hbox.addStretch(1)
         vbox.addLayout(hbox)
