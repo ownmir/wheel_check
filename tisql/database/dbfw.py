@@ -1,6 +1,7 @@
 
 
-def connect_to_base_and_execute(query, error_label, user, password, parse_button, gui="pyqt", base="oracle"):
+def connect_to_base_and_execute(query, error_label, user, password, parse_button, gui="pyqt", base="oracle",
+                                name_base_sqlite3="testdb.db"):
 
     if gui == "tkinter":
         error_label['text'] = ''
@@ -8,9 +9,9 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
         error_label.setText(query)
     try:
         if base == "oracle":
-            import cx_Oracle as ora
+            import cx_Oracle as driver
         else:
-            pass
+            import sqlite3 as driver
     except ModuleNotFoundError as info:
         print('Module Not Found Error:', info)
         return
@@ -19,27 +20,35 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
     else:
         print('Welcome to else driver!')
     try:
-        connection = ora.connect(user, password, 'MMFO')
+        if base == "oracle":
+            connection = driver.connect(user, password, 'MMFO')
+        else:
+            connection = driver.connect(name_base_sqlite3)
         print("Connect is created.")
         if gui == "tkinter":
             parse_button['text'] = 'Список МФО, запрос (Пользователь и пароль должны быть правильными.)'
         else:
             parse_button.setText("Запрос (Пользователь и пароль должны быть правильными.)")
         result = ''
-        with connection.cursor() as cursor:
+        if base == 'oracle':
+            context = connection.cursor()
+        else:
+            context = connection
+        with context as cursor:
             print("Cursor is created.")
             # так объявляется курсорная переменная
             # ret = cursor.var(ora.CURSOR)
             # cursor.execute('''begin test_cur(1, 20, :ret); end; ''', ret=ret)
-            cursor.execute('''begin  bars.bars_login.login_user(sys_guid, 1, null, null); end; ''')
-            print("Bars login.")
+            if base == "oracle":
+                cursor.execute('''begin  bars.bars_login.login_user(sys_guid, 1, null, null); end; ''')
+                print("Bars login.")
             # print(cursor)
             try:
                 print("After query", query)
                 for row in cursor.execute(query):
                     result += '{}\n'.format(row)
                 print("Executed.")
-            except ora.DatabaseError as query_error:
+            except driver.DatabaseError as query_error:
                 if gui == "tkinter":
                     parse_button['text'] = 'Список МФО, запрос (БЫЛА ОШИБКА ЗАПРОСА!)'
                 else:
@@ -55,7 +64,7 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
                 error_label['text'] = result
             else:
                 error_label.setText(result)
-    except ora.DatabaseError as connect_error:
+    except driver.DatabaseError as connect_error:
         if gui == "tkinter":
             parse_button['text'] = 'Список МФО, запрос (БЫЛА ОШИБКА СОЕДИНЕНИЯ!)'
         else:

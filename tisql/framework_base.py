@@ -21,20 +21,53 @@ def run(index, text1, text2, error_label, user, password, parse_button, table):
                 error_label.setText('Вы не ввели пароль!')
             else:
                 error_label.setText('Пока все хорошо..')
-                connect_to_base_and_execute(query, error_label, user, password, parse_button)
+                # connect_to_base_and_execute(query, error_label, user, password, parse_button)
+                connect_to_base_and_execute(query, error_label, user, password, parse_button, base="sqlite3")
                 table.clear()
                 try:
                     id_list = list(parsed.tokens[2].get_identifiers())
                     table.setColumnCount(len(id_list))  # Устанавливаем количество колонок, равное к-ву полей в запросе
                     # table.setRowCount(1)  # и одну строку в таблице
                     # Устанавливаем заголовки таблицы
-                    headers_list = [x.get_alias() for x in id_list]
+                    headers_list = [x.get_alias() or x.get_name() for x in id_list]
                     table.setHorizontalHeaderLabels(headers_list)
                 except AttributeError:
                     error_label.setText('Что-то не так(')
 
                     tokens = parsed.tokens
-
+                    columns = []
+                    tables = []
+                    is_from = False
+                    for token in tokens:
+                        print("token", token, "ttype", token.ttype)
+                        if token.ttype is sqlparse.tokens.Wildcard:
+                            print("*")
+                            columns.append("*")
+                        if isinstance(token, sqlparse.sql.IdentifierList):
+                            print("IdentifierList found")
+                            if is_from:
+                                for identifier in token.get_identifiers():
+                                    tables.append(str(identifier))
+                                continue
+                            for identifier in token.get_identifiers():
+                                columns.append(str(identifier))
+                        if isinstance(token, sqlparse.sql.Identifier):
+                            print("Identifier found")
+                            if is_from:
+                                tables.append(str(token))
+                                continue
+                            columns.append(str(token))
+                        if token.ttype is sqlparse.tokens.Keyword:  # from
+                            print("token.ttype is sqlparse.tokens.Keyword (# from)")
+                            print(columns)
+                            is_from = True
+                            continue
+                        if str(token) == "where":
+                            print("token.ttype is sqlparse.tokens.Keyword (# where) .. breaking")
+                            print(columns)
+                            print(tables)
+                            break
+                    print(tables)
         else:
             error_label.setText('В качестве запросов вы можете использовать только выборки "SELECT"!')
     except IndexError:
@@ -83,8 +116,10 @@ class Main(QMainWindow):
         # ok_button.clicked.connect(lambda: run(q, error_label, user_entry.text(), pass_entry.text(), cancel_button))
         # self.ok_button.clicked.connect(lambda: run(self.text_edit1.toPlainText(), self.error_label, self.user_entry.text(), self.pass_entry.text(), self.cancel_button))
         top.addTab(self.text_edit1, "Файлы, не сквитованые более 20 мин")
+        q2 = """select dk.dk, dk.name from dk"""
         self.text_edit2 = QTextEdit()
         top.addTab(self.text_edit2, "Tab2")
+        self.text_edit2.setPlainText(q2)
         top.currentChanged.connect(self.top_on_current_change)
 
         bottom = QTabWidget(central_widget)
@@ -93,6 +128,9 @@ class Main(QMainWindow):
         # grid_layout = QGridLayout()             # Создаём QGridLayout
         # bottom.setLayout(grid_layout)
         table = QTableWidget(self)  # Создаём таблицу
+        # self.ok_button.clicked.connect(
+        #     lambda: run(top.currentIndex(), self.text_edit1, self.text_edit2, self.error_label, self.user_entry.text(),
+        #                 self.pass_entry.text(), self.cancel_button, table))
         self.ok_button.clicked.connect(
             lambda: run(top.currentIndex(), self.text_edit1, self.text_edit2, self.error_label, self.user_entry.text(),
                         self.pass_entry.text(), self.cancel_button, table))
