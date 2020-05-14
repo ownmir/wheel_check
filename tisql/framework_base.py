@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 from database.dbfw import connect_to_base_and_execute
 import sqlparse
+import cx_Oracle
 
     
 def run(index, text1, text2, error_label, user, password, parse_button, table):
@@ -22,52 +23,67 @@ def run(index, text1, text2, error_label, user, password, parse_button, table):
             else:
                 error_label.setText('Пока все хорошо..')
                 # connect_to_base_and_execute(query, error_label, user, password, parse_button)
-                connect_to_base_and_execute(query, error_label, user, password, parse_button, base="sqlite3")
-                table.clear()
-                try:
-                    id_list = list(parsed.tokens[2].get_identifiers())
-                    table.setColumnCount(len(id_list))  # Устанавливаем количество колонок, равное к-ву полей в запросе
-                    # table.setRowCount(1)  # и одну строку в таблице
-                    # Устанавливаем заголовки таблицы
-                    headers_list = [x.get_alias() or x.get_name() for x in id_list]
-                    table.setHorizontalHeaderLabels(headers_list)
-                except AttributeError:
-                    error_label.setText('Что-то не так(')
-
-                    tokens = parsed.tokens
-                    columns = []
-                    tables = []
-                    is_from = False
-                    for token in tokens:
-                        print("token", token, "ttype", token.ttype)
-                        if token.ttype is sqlparse.tokens.Wildcard:
-                            print("*")
-                            columns.append("*")
-                        if isinstance(token, sqlparse.sql.IdentifierList):
-                            print("IdentifierList found")
-                            if is_from:
+                rows = connect_to_base_and_execute(query, error_label, user, password, parse_button)
+                if rows:
+                    table.clear()
+                    try:
+                        id_list = list(parsed.tokens[2].get_identifiers())
+                        table.setColumnCount(len(id_list))  # Устанавливаем количество колонок, равное к-ву полей в запросе
+                        # table.setRowCount(1)  # и одну строку в таблице
+                        # Устанавливаем заголовки таблицы
+                        headers_list = [x.get_alias() or x.get_name() for x in id_list]
+                        table.setHorizontalHeaderLabels(headers_list)
+                        for line, row in enumerate(rows):
+                            for i, header in enumerate(headers_list):
+                                # Устанавливаем всплывающие подсказки на заголовки
+                                table.horizontalHeaderItem(i).setToolTip(header)
+                                # table.horizontalHeaderItem(1).setToolTip("Column 2 ")
+                                # Устанавливаем выравнивание на заголовки
+                                table.horizontalHeaderItem(i).setTextAlignment(Qt.AlignLeft)
+                                # print("row", row)
+                                # заполняем строку
+                                table.setItem(line, i, QTableWidgetItem(str(row[i])))
+                        # делаем ресайз колонок по содержимому
+                        table.resizeColumnsToContents()
+                    except AttributeError:
+                        error_label.setText('Что-то не так(')
+                        tokens = parsed.tokens
+                        columns = []
+                        tables = []
+                        is_from = False
+                        for token in tokens:
+                            print("token", token, "ttype", token.ttype)
+                            if token.ttype is sqlparse.tokens.Wildcard:
+                                print("*")
+                                columns.append("*")
+                            if isinstance(token, sqlparse.sql.IdentifierList):
+                                print("IdentifierList found")
+                                if is_from:
+                                    for identifier in token.get_identifiers():
+                                        tables.append(str(identifier))
+                                    continue
                                 for identifier in token.get_identifiers():
-                                    tables.append(str(identifier))
+                                    columns.append(str(identifier))
+                            if isinstance(token, sqlparse.sql.Identifier):
+                                print("Identifier found")
+                                if is_from:
+                                    tables.append(str(token))
+                                    continue
+                                columns.append(str(token))
+                            if token.ttype is sqlparse.tokens.Keyword:  # from
+                                print("token.ttype is sqlparse.tokens.Keyword (# from)")
+                                print(columns)
+                                is_from = True
                                 continue
-                            for identifier in token.get_identifiers():
-                                columns.append(str(identifier))
-                        if isinstance(token, sqlparse.sql.Identifier):
-                            print("Identifier found")
-                            if is_from:
-                                tables.append(str(token))
-                                continue
-                            columns.append(str(token))
-                        if token.ttype is sqlparse.tokens.Keyword:  # from
-                            print("token.ttype is sqlparse.tokens.Keyword (# from)")
-                            print(columns)
-                            is_from = True
-                            continue
-                        if str(token) == "where":
-                            print("token.ttype is sqlparse.tokens.Keyword (# where) .. breaking")
-                            print(columns)
-                            print(tables)
-                            break
-                    print(tables)
+                            if str(token) == "where":
+                                print("token.ttype is sqlparse.tokens.Keyword (# where) .. breaking")
+                                print(columns)
+                                print(tables)
+                                break
+                        print(tables)
+                    except cx_Oracle.InterfaceError as driver_interface_error:
+                        print("Driver interface error", driver_interface_error, "rows", rows, "error_label.text()", error_label.text())
+                        # return rows
         else:
             error_label.setText('В качестве запросов вы можете использовать только выборки "SELECT"!')
     except IndexError:
@@ -78,7 +94,15 @@ class Main(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        
+
+        self.ok_button = QPushButton("Run")
+        self.cancel_button = QPushButton("Результат смотри тут")
+        self.error_label = QLabel("Errors will be here")
+        self.user_entry = QLineEdit("user5301")
+        self.pass_entry = QLineEdit("d")
+        self.text_edit1 = QTextEdit()
+        self.text_edit2 = QTextEdit()
+
         self.init_ui()
 
     def top_on_current_change(self, index):
@@ -97,27 +121,23 @@ class Main(QMainWindow):
         
         central_widget = QWidget(self)                  # Создаём центральный виджет
         self.setCentralWidget(central_widget)
-        self.ok_button = QPushButton("OK")
 
-        self.cancel_button = QPushButton("Результат смотри тут")
 
-        self.error_label = QLabel("Errors will be here")
 
-        self.user_entry = QLineEdit("user5301")
-        self.pass_entry = QLineEdit("d")
         self.pass_entry.setEchoMode(QLineEdit.PasswordEchoOnEdit)
         vbox = QVBoxLayout(central_widget)
 
         top = QTabWidget(central_widget)
         q = """select a.fn "Файл", a.dat "dat", a.kv "Валюта", a.skr "Сума файла", a.n "К-во пл", a.otm "otm", a.k_er "Ошибка", b.nb "Банк отправителя", a.sign_key "Ключ" from bars.zag_b a, bars.banks$base b where  a.DAT >= trunc(sysdate) and a.kf = b.mfo and a.otm <= 3 and to_char(a.dat + INTERVAL '20' MINUTE,'DD.MM.YYYY HH24:MI') <= to_char(sysdate,'DD.MM.YYYY HH24:MI') group by  fn, a.dat, a.kv, a.skr, a.n, a.otm, a.k_er, b.nb, a.kf, a.sign_key order by a.kf, a.dat"""
         print("q", q, "end q")
-        self.text_edit1 = QTextEdit()
+        # self.text_edit1 = QTextEdit()
         self.text_edit1.setPlainText(q)
         # ok_button.clicked.connect(lambda: run(q, error_label, user_entry.text(), pass_entry.text(), cancel_button))
-        # self.ok_button.clicked.connect(lambda: run(self.text_edit1.toPlainText(), self.error_label, self.user_entry.text(), self.pass_entry.text(), self.cancel_button))
+        # self.ok_button.clicked.connect(lambda: run(self.text_edit1.toPlainText(), self.error_label,
+        # self.user_entry.text(), self.pass_entry.text(), self.cancel_button))
         top.addTab(self.text_edit1, "Файлы, не сквитованые более 20 мин")
         q2 = """select dk.dk, dk.name from dk"""
-        self.text_edit2 = QTextEdit()
+        # self.text_edit2 = QTextEdit()
         top.addTab(self.text_edit2, "Tab2")
         self.text_edit2.setPlainText(q2)
         top.currentChanged.connect(self.top_on_current_change)
@@ -199,7 +219,7 @@ class Main(QMainWindow):
         toolbar = self.addToolBar('Exit')
         toolbar.addAction(exitAction)
 
-        self.setGeometry(300, 100, 650, 550)
+        self.setGeometry(300, 100, 850, 550)
         self.setWindowTitle('Like silq')
 ##        self.setWindowIcon(QIcon('cfg.ico'))
         self.show()

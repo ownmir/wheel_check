@@ -45,15 +45,26 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             # print(cursor)
             try:
                 print("After query", query)
-                for row in cursor.execute(query):
-                    result += '{}\n'.format(row)
-                print("Executed.")
+                rows = cursor.execute(query)
+                if rows:
+
+                    print("Executed.")
+
+                    print("base", base)
+                    if base == "oracle":
+                        result = ".."
+                        # for row in rows:
+                        #     result += '{}\n'.format(row)
+                    else:
+                        num_lines = str(rows.arraysize)
+                        result += '\nСтрок ' + num_lines
             except driver.DatabaseError as query_error:
                 if gui == "tkinter":
                     parse_button['text'] = 'Список МФО, запрос (БЫЛА ОШИБКА ЗАПРОСА!)'
                 else:
                     parse_button.setText("Запрос (БЫЛА ОШИБКА ЗАПРОСА!)")
                 print('Query error: ', query_error)
+                rows = None
         if result == '':
             if gui == "tkinter":
                 error_label['text'] = 'Нет данных по блокированным.'
@@ -64,6 +75,8 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
                 error_label['text'] = result
             else:
                 error_label.setText(result)
+        if rows:
+            return rows
     except driver.DatabaseError as connect_error:
         if gui == "tkinter":
             parse_button['text'] = 'Список МФО, запрос (БЫЛА ОШИБКА СОЕДИНЕНИЯ!)'
