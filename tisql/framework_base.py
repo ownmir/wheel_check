@@ -15,7 +15,7 @@ def run(index, text1, text2, error_label, user, password, parse_button, table):
         query = text1.toPlainText()
     else:
         query = text2.toPlainText()
-        print("text2.toPlainText()",query)
+        print("text2.toPlainText()", query)
     try:
         parsed = sqlparse.parse(query)[0]
         if parsed.get_type() == 'SELECT':
@@ -31,17 +31,21 @@ def run(index, text1, text2, error_label, user, password, parse_button, table):
                         id_list = list(parsed.tokens[2].get_identifiers())
                         table.setColumnCount(len(id_list))  # Устанавливаем количество колонок, равное к-ву полей в запросе
                         # table.setRowCount(1)  # и одну строку в таблице
+                        table.setRowCount(min(30, len(rows)))  # и количество строк в таблице
                         # Устанавливаем заголовки таблицы
                         headers_list = [x.get_alias() or x.get_name() for x in id_list]
                         table.setHorizontalHeaderLabels(headers_list)
                         for line, row in enumerate(rows):
+                            print("line", line)
                             for i, header in enumerate(headers_list):
                                 # Устанавливаем всплывающие подсказки на заголовки
                                 table.horizontalHeaderItem(i).setToolTip(header)
                                 # table.horizontalHeaderItem(1).setToolTip("Column 2 ")
                                 # Устанавливаем выравнивание на заголовки
                                 table.horizontalHeaderItem(i).setTextAlignment(Qt.AlignLeft)
-                                # print("row", row)
+                                print("row", row)
+                                print("row[i]", row[i])
+                                print("QTableWidgetItem(str(row[i]))", QTableWidgetItem(str(row[i])))
                                 # заполняем строку
                                 table.setItem(line, i, QTableWidgetItem(str(row[i])))
                         # делаем ресайз колонок по содержимому
@@ -85,6 +89,10 @@ def run(index, text1, text2, error_label, user, password, parse_button, table):
                     except cx_Oracle.InterfaceError as driver_interface_error:
                         print("Driver interface error", driver_interface_error, "rows", rows, "error_label.text()", error_label.text())
                         # return rows
+                else:
+                    table.setColumnCount(0)  # Устанавливаем к-во колонок
+                    table.setRowCount(0)  # и количество строк в таблице
+                    table.clear()
         else:
             error_label.setText('В качестве запросов вы можете использовать только выборки "SELECT"!')
     except IndexError:
@@ -156,7 +164,7 @@ class Main(QMainWindow):
             lambda: run(top.currentIndex(), self.text_edit1, self.text_edit2, self.error_label, self.user_entry.text(),
                         self.pass_entry.text(), self.cancel_button, table))
         table.setColumnCount(3)  # Устанавливаем три колонки
-        table.setRowCount(1)  # и одну строку в таблице
+        table.setRowCount(2)  # и две строки в таблице
 
         # Устанавливаем заголовки таблицы
         table.setHorizontalHeaderLabels(["Header 1", "Header 2", "Header 3"])
@@ -172,9 +180,14 @@ class Main(QMainWindow):
         table.horizontalHeaderItem(2).setTextAlignment(Qt.AlignRight)
 
         # заполняем первую строку
-        table.setItem(0, 0, QTableWidgetItem("Text in column 1"))
-        table.setItem(0, 1, QTableWidgetItem("Text in column 2"))
-        table.setItem(0, 2, QTableWidgetItem("Text in column 3"))
+        table.setItem(0, 0, QTableWidgetItem("Text0 in column 1"))
+        table.setItem(0, 1, QTableWidgetItem("Text0 in column 2"))
+        table.setItem(0, 2, QTableWidgetItem("Text0 in column 3"))
+
+        # заполняем первую строку
+        table.setItem(1, 0, QTableWidgetItem("Text1 in column 1"))
+        table.setItem(1, 1, QTableWidgetItem("Text1 in column 2"))
+        table.setItem(1, 2, QTableWidgetItem("Text1 in column 3"))
 
         # делаем ресайз колонок по содержимому
         table.resizeColumnsToContents()

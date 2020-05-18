@@ -44,7 +44,7 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             # ret = cursor.var(ora.CURSOR)
             # cursor.execute('''begin test_cur(1, 20, :ret); end; ''', ret=ret)
             if base == "oracle":
-                cursor.execute('''begin  bars.bars_login.login_user(sys_guid, 1, null, null); end; ''')
+                # cursor.execute('''begin  bars.bars_login.login_user(sys_guid, 1, null, null); end; ''')
                 print("Bars login.")
             # print(cursor)
             try:
@@ -56,7 +56,8 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
 
                     print("base", base)
                     if base == "oracle":
-                        result = ".."
+                        num_lines = str(len(rows))
+                        result += '\nСтрок ' + num_lines
                         # for row in rows:
                         #     result += '{}\n'.format(row)
                     else:
