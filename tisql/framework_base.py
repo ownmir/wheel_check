@@ -15,6 +15,7 @@ def run(index, text1, text2, error_label, user, password, parse_button, table):
         query = text1.toPlainText()
     else:
         query = text2.toPlainText()
+        print("text2.toPlainText()",query)
     try:
         parsed = sqlparse.parse(query)[0]
         if parsed.get_type() == 'SELECT':

@@ -9,6 +9,8 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
         error_label.setText(query)
     try:
         if base == "oracle":
+            import os
+            os.environ['NLS_LANG'] = 'American_America.AL32UTF8'
             import cx_Oracle as driver
         else:
             import sqlite3 as driver
@@ -21,7 +23,8 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
         print('Welcome to else driver!')
     try:
         if base == "oracle":
-            connection = driver.connect(user, password, 'MMFO')
+            connection = driver.connect(user, password, 'XE')
+            print("Connect encod", connection.encoding)
         else:
             connection = driver.connect(name_base_sqlite3)
         print("Connect is created.")
@@ -34,6 +37,7 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             context = connection.cursor()
         else:
             context = connection
+
         with context as cursor:
             print("Cursor is created.")
             # так объявляется курсорная переменная
@@ -45,7 +49,7 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             # print(cursor)
             try:
                 print("After query", query)
-                rows = cursor.execute(query)
+                rows = list(cursor.execute(query))
                 if rows:
 
                     print("Executed.")
