@@ -1,6 +1,6 @@
 
 
-def connect_to_base_and_execute(query, error_label, user, password, parse_button, gui="pyqt", base="oracle",
+def connect_to_base_and_execute(query, error_label, user, password, parse_button, table_name, gui="pyqt", base="oracle",
                                 name_base_sqlite3="testdb.db"):
 
     if gui == "tkinter":
@@ -23,7 +23,8 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
         print('Welcome to else driver!')
     try:
         if base == "oracle":
-            connection = driver.connect(user, password, 'XE')
+            # connection = driver.connect(user, password, 'XE')
+            connection = driver.connect(user, password, 'MMFO')
             print("Connect encod", connection.encoding)
         else:
             connection = driver.connect(name_base_sqlite3)
@@ -44,12 +45,18 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             # ret = cursor.var(ora.CURSOR)
             # cursor.execute('''begin test_cur(1, 20, :ret); end; ''', ret=ret)
             if base == "oracle":
-                # cursor.execute('''begin  bars.bars_login.login_user(sys_guid, 1, null, null); end; ''')
+                cursor.execute('''begin  bars.bars_login.login_user(sys_guid, 1, null, null); end; ''')
                 print("Bars login.")
             # print(cursor)
             try:
                 print("After query", query)
-                rows = list(cursor.execute(query))
+                if table_name == "''":
+                    rows = list(cursor.execute(query))
+                else:
+                    print("table_name in dbfw.connect_to_base_and_execute")
+                    print(table_name)
+                    named_params = {'table_name': table_name}
+                    rows = list(cursor.execute(query, named_params))
                 if rows:
 
                     print("Executed.")
@@ -81,6 +88,7 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             else:
                 error_label.setText(result)
         if rows:
+            print("Возвращаем rows..", rows)
             return rows
     except driver.DatabaseError as connect_error:
         if gui == "tkinter":
