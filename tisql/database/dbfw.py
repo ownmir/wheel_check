@@ -23,9 +23,11 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
         print('Welcome to else driver!')
     try:
         if base == "oracle":
-            # connection = driver.connect(user, password, 'XE')
-            connection = driver.connect(user, password, 'MMFO')
-            print("Connect encod", connection.encoding)
+            tns = "XE"
+            # tns = "XE"
+            connection = driver.connect(user, password, tns)
+            # connection = driver.connect(user, password, 'MMFO')
+            # print("Connect encod", connection.encoding)
         else:
             connection = driver.connect(name_base_sqlite3)
         print("Connect is created.")
@@ -44,7 +46,7 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             # так объявляется курсорная переменная
             # ret = cursor.var(ora.CURSOR)
             # cursor.execute('''begin test_cur(1, 20, :ret); end; ''', ret=ret)
-            if base == "oracle":
+            if base == "oracle" and tns == 'MMFO':
                 cursor.execute('''begin  bars.bars_login.login_user(sys_guid, 1, null, null); end; ''')
                 print("Bars login.")
             # print(cursor)
@@ -88,7 +90,7 @@ def connect_to_base_and_execute(query, error_label, user, password, parse_button
             else:
                 error_label.setText(result)
         if rows:
-            print("Возвращаем rows..", rows)
+            # print("Возвращаем rows..", rows)
             return rows
     except driver.DatabaseError as connect_error:
         if gui == "tkinter":
