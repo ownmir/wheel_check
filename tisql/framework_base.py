@@ -281,7 +281,7 @@ class Main(QMainWindow):
         # ok_button.clicked.connect(lambda: run(q, error_label, user_entry.text(), pass_entry.text(), cancel_button))
         # self.ok_button.clicked.connect(lambda: run(self.text_edit1.toPlainText(), self.error_label,
         # self.user_entry.text(), self.pass_entry.text(), self.cancel_button))
-        self.top.addTab(self.text_edit1, "Файлы, не сквитованые более 20 мин")
+        self.top.addTab(self.text_edit1, "Файлы, несквитованные более 20 мин")
         q2 = """select * from bars.SEC_AUDIT \
         where REC_DATE >= trunc(sysdate) \
         and to_char(REC_DATE,'DD.MM.YYYY HH24:MI') >= to_char(sysdate-interval '30' MINUTE, 'DD.MM.YYYY HH24:MI') \
