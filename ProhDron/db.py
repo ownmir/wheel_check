@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, qApp, QLineEdit,
 from PyQt5.QtWidgets import QComboBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap, QPalette, QBrush, QIcon
-# from PyQt5.QtSql import QSqlDatabase
-from PySide2.QtSql import QSqlDatabase
+from PyQt5.QtSql import QSqlDatabase
+# from PySide2.QtSql import QSqlDatabase
 import sys
 
 
@@ -13,12 +13,17 @@ def on_activate(text):
 
 def on_db(zero, driver, tns, port, user, passw):
     print("on", zero, driver, tns, port, user)
+    tns.editingFinished.emit()
+    port.editingFinished.emit()
+    user.editingFinished.emit()
+    passw.editingFinished.emit()
     # conn_oracle = QSqlDatabase.addDatabase("QOCI", connectionName=tns)
-    conn = QSqlDatabase.addDatabase(driver, connectionName=tns)
+    conn = QSqlDatabase.addDatabase(driver, connectionName=tns.text())
     # conn.setPort(int(port))
     # "DRIVER={Oracle in OraClient12Home1_32bit};
-    conn.setDatabaseName("DRIVER={Oracle in OraClient12Home1_32bit};DBQ=XE;" +
-                         "UID={0};PWD={1};".format(user, passw))
+    # conn.setDatabaseName("DRIVER={Oracle in OraClient12Home1_32bit};DBQ=XE;" +
+    conn.setDatabaseName("DRIVER={Oracle in OraDB18Home1};DBQ=XE;" +
+                         "UID={0};PWD={1};".format(user.text(), passw.text()))
 
     # сonnectString = "DRIVER={Oracle in OraClient12Home1_32bit};DSN=Oracle DSN"
     # conn.setUserName(user)
@@ -29,6 +34,11 @@ def on_db(zero, driver, tns, port, user, passw):
     else:
         print("Была ошибка. connectionName", tns, user, passw)
         conn.lastError().text()
+
+
+def on_user():
+    print("on_user")
+
 
 
 print("Begin")
@@ -47,7 +57,8 @@ driverComboBox.addItem(QIcon("mysql.svg"), "QMYSQL")
 # driverLineEdit = QLineEdit("QMYSQL")
 # tnsLineEdit = QLineEdit("XE")
 # tnsLineEdit = QLineEdit("D:/Work/virte/pyqt5/Scripts/mytest.db")
-tnsLineEdit = QLineEdit("Oracle DSN")
+# tnsLineEdit = QLineEdit("Oracle DSN")
+tnsLineEdit = QLineEdit("XESN")
 portLE = QLineEdit("1521")
 userLineEdit = QLineEdit("user5301")
 # userLineEdit = QLineEdit("root")
@@ -72,8 +83,9 @@ window.setLayout(form)
 x = driverComboBox.currentText()
 driverComboBox.activated.connect(on_activate)
 print("tnsLineEdit.text()", tnsLineEdit.text())
-b1.clicked.connect(lambda zero="0", driver=x, tns=tnsLineEdit.text(), port=portLE.text(), user=userLineEdit.text(),
-                          passw=passLineEdit.text(): on_db("0", driver, tns, port, user, passw))
+userLineEdit.editingFinished.connect(on_user)
+b1.clicked.connect(lambda zero="0", driver=x, tns=tnsLineEdit, port=portLE, user=userLineEdit,
+                          passw=passLineEdit: on_db("0", driver, tns, port, user, passw))
 print("End")
 window.show()
 sys.exit(app.exec_())
