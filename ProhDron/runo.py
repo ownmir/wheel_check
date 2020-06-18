@@ -11,4 +11,5 @@ print("Name of database:", e.name)
 connn = e.open_db()
 if connn:
     print(e.name, "Database is opened.")
+    record_info = e.record()
     connn.close()
