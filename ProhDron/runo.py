@@ -1,4 +1,5 @@
 from PySide2 import QtWidgets
+from PySide2.QtSql import QSqlQuery
 import sys
 from wwdb import WorkWithLiteDB, WorkWithMyDB, WorkWithODBC
 
@@ -29,4 +30,31 @@ if connn:
         index = connn.primaryIndex(table)
         print("name", index.name(), "Count of fields in index", index.count(), "isDescending", index.isDescending(0),
               )
+    query = QSqlQuery()
+    if 'good' not in tables:
+        query.exec_("create table good(id integer primary key autoincrement, goodname text, goodcount integer) ")
+    good_record = connn.record('good')
+    if good_record == 0:
+        query.prepare("insert into good values (null, ?, ?)")
+        query.addBindValue('FlashDrive')
+        query.addBindValue(10)
+        query.exec_()
+        query.prepare("insert into good values (null, ?, ?)")
+        query.bindValue(0, 'Paper for printer')
+        query.bindValue(1, 3)
+        query.exec_()
+        query.prepare("insert into good values (null, :name, :count)")
+        query.bindValue(':name', 'Catrige for printer')
+        query.bindValue(':count', 8)
+        query.exec_()
+        query.prepare("insert into good values (null, :name, :count)")
+        list1 = ['Cd', 'Dvd', 'Scaner']
+        list2 = [9, 4, 7]
+        query.bindValue(':name', list1)
+        query.bindValue(':count', list2)
+        query.execBatch()
+    query.prepare("select * from good order by goodname")
+    query.setForwardOnly(True)
+    query.exec_()
+
     connn.close()

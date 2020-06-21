@@ -1,0 +1,43 @@
+#!/bin/bash
+# Проверяю не пустой ли параметр
+if [ ! $1 ]
+then
+    echo "Вы не ввели коментарий commit"
+else
+    co1=$1
+fi
+do=1
+echo "Вы выполнили скрипт $0, где определили переменную do - $do , параметр 1 - $1"
+cd ~/dirgg
+read -p "Введите 1 для выполнения команды 'git add .' или 0 для выхода: " -n 1 vv
+echo
+echo "Вы ввели $vv"
+if [[ $do -eq $vv ]]
+then
+ echo 'Вы выбрали выполнить 1'
+ gg add .
+
+else
+ echo 'Вышли после проверки 1'
+ exit 0
+fi
+read -p "Введите 1 для выполнения команды 'git commit -m\"$1\"' или 0 для выхода: " -n 1 vv2
+echo
+echo "Вы ввели $vv2"
+if [[ $do -eq $vv2 ]]
+then
+ echo 'Вы выбрали выполнить 2'
+ if [ ! $1 ]
+ then
+   read -p "Вы не ввели коментарий commit. Введите сейчас: " co1
+ fi
+ echo "Вы ввели комментарий к коммиту $co1"
+ if [ ! $co1 ]
+ then
+  echo "Вы так и НЕ ввели коментарий commit, выходим.."
+  exit 1
+ fi
+ echo "Выполняем команду git commit -m\"$co1\""
+ gg commit -m"$1"
+fi
+echo 'Выход'
