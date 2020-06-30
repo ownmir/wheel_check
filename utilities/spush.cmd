@@ -2,7 +2,7 @@
 @set do=c
 @set quit=q
 c:
-cd c:\users\fominvv\wheel_check
+cd c:\users\%username%\wheel_check
 @set /p v1=Input c to run command 'git add .' or any key to quit 
 @if %v1%==%do% (@goto m1
 ) else (

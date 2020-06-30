@@ -2,6 +2,7 @@ import sys
 from PySide2.QtWidgets import QWidget, QApplication, QLabel, QLineEdit, QHBoxLayout, QFormLayout, QPushButton, QGroupBox
 from PySide2.QtWidgets import QVBoxLayout, QTableView
 from PySide2.QtCore import Qt
+from PySide2.QtGui import QPixmap
 from PySide2.QtSql import QSqlQueryModel, QSqlQuery
 from database.wwdb import WorkWithLiteDB, WorkWithODBC
 import winsound
@@ -137,6 +138,10 @@ class Main(QWidget):
             except:
                 self.error_label.setText(' Возможно в четвертой строке файла ini_balance нет запроса!')
             
+
+        label = QLabel(self)
+        image = QPixmap("b.jfif", format="JPG")
+        label.setPixmap(image)
         self.group = QGroupBox("Таймер остатка")
         self.group.setStyleSheet("font: corbel; font-size: 14px;")
         v_group = QVBoxLayout()  # Контейнер для группы
@@ -147,6 +152,7 @@ class Main(QWidget):
         self.group.setLayout(v_group)
         
         form = QFormLayout()
+        form.addRow("", label)
         form.addRow("По&льзователь", self.user_entry)
         form.addRow("&Пароль", self.pass_entry)
         form.addRow("&МФО области", self.ru_entry)
