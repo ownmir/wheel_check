@@ -2,9 +2,12 @@ import sys
 from PySide2.QtWidgets import QWidget, QApplication, QLabel, QLineEdit, QHBoxLayout, QFormLayout, QPushButton, QGroupBox
 from PySide2.QtWidgets import QVBoxLayout, QTableView
 from PySide2.QtCore import Qt
-from PySide2.QtGui import QPixmap
+from PySide2.QtGui import QPixmap, QStandardItemModel, QStandardItem
 from PySide2.QtSql import QSqlQueryModel, QSqlQuery
-from database.wwdb import WorkWithLiteDB, WorkWithODBC, WorkWithOCI
+##from database.wwdb import WorkWithLiteDB, WorkWithODBC, WorkWithOCI
+from database.dbfw import connect_to_base_and_execute
+##import sqlparse
+import cx_Oracle
 import winsound
 import hashlib
 import getpass
@@ -30,10 +33,10 @@ class Main(QWidget):
         # self.cur_entry.setStyleSheet("font: corbel; font-size: 12px;")
         self.balance_entry = QLineEdit("213000001")
         # self.balance_entry.setStyleSheet("font: corbel; font-size: 12px;")
-        self.ok_button = QPushButton("Запустить")
+        self.ok_button = QPushButton("Запрос (Пользователь и пароль должны быть правильными.)")
         self.ok_button.setStyleSheet("font: corbel; font-size: 12px; color: rgb(0, 0, 255)")
         # self.ok_button.setStyleSheet("color: rgb(160, 70, 70)")
-        self.error_label = QLabel("Ошибки будут тут")
+        self.error_label = QLabel("Количество строк или ошибки будут тут")
         self.error_label.setStyleSheet("color: rgb(255, 0, 0)")
 
         self.start_button1 = QPushButton("Старт")
@@ -47,7 +50,8 @@ class Main(QWidget):
         self.timer_id = 0
         self.table = QTableView()
         # Create model
-        self.sqm = QSqlQueryModel(parent=self.table)
+        # self.sqm = QSqlQueryModel(parent=self.table)
+        self.standart_item_model = QStandardItemModel()
 
         self.init_ui()
 
@@ -73,54 +77,34 @@ class Main(QWidget):
         self.error_label.setText(text)
     
     def run(self):
-##        print(getpass.getuser(), self.user_entry.text())
-        e = WorkWithOCI("XE", self.user_entry.text(), keyring.get_password(getpass.getuser(), self.user_entry.text()))
-        #print("Name of database:", e.name)
-        # print("Host :", e.host)
-        conn = e.open_db()
-        if conn:
-            self.error_label.setText("Ошибок уже/пока нет")
-            query = QSqlQuery()
-            query2 = QSqlQuery()
-            # Доступность
-            if query.exec_(self.bars):
-                #print("Q1 done!")
-                query.finish()
-                # Create model
-                self.sqm = QSqlQueryModel(parent=self.table)
-                # Сам запрос
-                self.sqm.setQuery(self.table_query.format(self.ru_entry.text().strip(), self.cur_entry.text().strip(), self.balance_entry.text().strip()))
-                if query2.exec_(self.table_query.format(self.ru_entry.text().strip(), self.cur_entry.text().strip(), int(self.balance_entry.text().strip()))):
-                    #print("Q2 done!")
-                    self.sqm.setQuery(query2)
-                else:
-                    self.print_and_label("Ошибка 2-го запроса")
-                    print("2-й запрос (", self.table_query.format(self.ru_entry.text().strip(), self.cur_entry.text().strip(), int(self.balance_entry.text().strip())), ") :", query.lastError().text())
-                # Задаем заголовки для столбцов модели
-                self.sqm.setHeaderData(0, Qt.Horizontal, "Счет")
-                self.sqm.setHeaderData(1, Qt.Horizontal, "РУ")
-                self.sqm.setHeaderData(2, Qt.Horizontal, "Валюта")
-                self.sqm.setHeaderData(3, Qt.Horizontal, "Остаток")
-                # self.print_and_label(sqm.lastError().text())
-                # Задаем для таблицы только что созданную модель
-                self.table.setModel(self.sqm)
-                # Not)Скрываем первый столбец, в котором выводится идентификатор
-                # self.table.hideColumn(0)
-                self.table.setColumnWidth(0, 150)
-                self.table.setColumnWidth(1, 60)
-                self.table.setColumnWidth(2, 80)
-                self.table.setColumnWidth(3, 150)
-                # print("sqm.rowCount()", self.sqm.rowCount())
-                if self.sqm.rowCount() > 0:
-                    frequency = 2500
-                    duration = 2000
-                    winsound.Beep(frequency, duration)
-                conn.close()
-                #conn.removeDatabase('qt_sql_default_connection')
-            else:
-                self.print_and_label("Ошибка первого запроса (", self.bars, ") :", query.lastError().text())
-        else:
-            self.print_and_label("Ошибка открытия базы данных")
+        
+        rows = connect_to_base_and_execute(self.table_query.format(self.ru_entry.text().strip(), self.cur_entry.text().strip(), int(self.balance_entry.text().strip())), self.error_label, self.user_entry.text(), keyring.get_password(getpass.getuser(), self.user_entry.text()),
+                                                                   self.ok_button, "''")
+        self.standart_item_model.clear()
+        self.table.clearSpans()
+        item_list = []
+        if rows:
+            #print("rows", rows)
+            for values in rows:
+                item_list = []
+                for value in values:
+                    if type(value) == int:
+                        item = QStandardItem(str(value))
+                    else:
+                        item = QStandardItem(value)
+                    item_list.append(item)
+                self.standart_item_model.appendRow(item_list)
+            self.standart_item_model.setHorizontalHeaderLabels(["Счет", "РУ", "Валюта",
+                                                            "Остаток"])
+            self.table.setModel(self.standart_item_model)
+            self.table.setColumnWidth(0, 150)
+            self.table.setColumnWidth(1, 60)
+            self.table.setColumnWidth(2, 80)
+            self.table.setColumnWidth(3, 150)
+            if self.standart_item_model.rowCount() > 0:
+                frequency = 2500
+                duration = 2000
+                winsound.Beep(frequency, duration)
         
     
     def timerEvent(self, event):
