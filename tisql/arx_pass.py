@@ -1,5 +1,27 @@
 import subprocess
+import hashlib
 
-myhash = 'e5f6'
-za = subprocess.call(['zip', '-e', '-P', myhash, 'avv', 'avv'])
+#save
+filename = 'mani.py'
+with open(filename, 'rb') as f:
+    m = hashlib.md5()
+    while True:
+       data = f.read(8192)
+       if not data:
+           break
+       m.update(data)
+    myhash = m.hexdigest()
+# myhash = 'e5f6'
+print(myhash)
+#za = subprocess.call(['zip', '-e', '-P', myhash, 'avv', 'avv'])
+za = subprocess.call(['7z', 'a', '-P'+myhash, 'avv', filename])
 print(za)
+# test
+with open("h", "r", encoding='utf-8') as tst:
+   lines = f.readlines()
+   try:
+       self.interval_e.setText(lines[0])
+   except:
+       self.error_label.setText(' Возможно в первой строке файла h нет line!')
+input("Modification of " + filename + " file is blocked")
+
