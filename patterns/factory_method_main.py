@@ -17,7 +17,7 @@ class Creator(ABC):
     реализация этого метода.
     """
     @abstractmethod
-    def factory_method(self):
+    def factory_method(self, *args):
         """
         Обратите внимание, что Создатель может также предоставить некоторую реализацию по умолчанию
         фабричного метода.
@@ -25,7 +25,7 @@ class Creator(ABC):
         """
         pass
 
-    def some_operation(self) -> str:
+    def some_operation(self, *args) -> str:
         """
         Также обратите внимание, что, несмотря на название, основная обязанность Создателя
         не создавать продукты. Обычно он содержит основную бизнес-логику.
@@ -35,7 +35,7 @@ class Creator(ABC):
         :return: result
         """
         # Вызовите фабричный метод, чтобы создать объект Card (Product).
-        card = self.factory_method()
+        card = self.factory_method(*args)
         # Теперь воспользуйтесь продуктом.
         result = f"Создатель: тот же код создателя только работает с {card.operation()}"
         return result
@@ -49,14 +49,17 @@ class HeroCreator(Creator):  # ConcreteCreator1
     способ, которым Создатель может оставаться независимым от конкретных классов продуктов.
     """
 
-    def factory_method(self) -> Hero:  # ConcreteProduct1
+    def factory_method(self, *args) -> Hero:  # ConcreteProduct1
         return Hero()
 
 
 class MinionCreator(Creator):
 
-    def factory_method(self) -> Minion:  # ConcreteProduct2
-        return Minion(1, 1)
+    def __init__(self, *args):
+        pass
+    
+    def factory_method(self, *args) -> Minion:  # ConcreteProduct2
+        return Minion(args[0], args[1])
 
 
 class Card(ABC):  # Product
@@ -111,7 +114,7 @@ def client_code(creator: Creator) -> None:
     :return:
     """
     print(f"Клиент: Я не знаю класс создателя, но он все еще работает.\n"
-          f"{creator.some_operation()}", end="")
+          f"{creator.some_operation(0,0)}", end="")
 
 
 if __name__ == "__main__":
@@ -120,4 +123,4 @@ if __name__ == "__main__":
     print("\n")
 
     print("App: Запущен с MinionCreator (ConcreteCreator2).")
-    client_code(MinionCreator())
+    client_code(MinionCreator(1,1))
