@@ -40,6 +40,12 @@ class Creator(ABC):
         result = f"Создатель: тот же код создателя только работает с {card.operation()}"
         return result
 
+    # def add_life(self, life):
+    #     card = self.factory_method(life)
+    #     print(f"add_life: жизнь до: {card.life}")
+    #     card.life += life
+    #     print(f"add_life: жизнь после: {card.life}")
+
 
 # Конкретные Создатели переопределяют фабричный метод, чтобы изменить результирующий тип карты (продукта).
 class HeroCreator(Creator):  # ConcreteCreator1
@@ -104,6 +110,12 @@ class Minion(Card):
 
     def draw(self):
         print("Рисуем существо")
+
+    def add_life(self, life: int):
+        print(f"add_life: жизнь до: {self.life}")
+        self.life += life
+        print(f"add_life: жизнь после: {self.life}")
+
 
 def client_code(creator: Creator) -> None:
     """
