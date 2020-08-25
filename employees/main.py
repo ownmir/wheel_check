@@ -9,7 +9,8 @@ class Component(ABC):
     сложных объектов композиции.
     """
 
-    _is_head: bool = False
+    def __init__(self, name: str):
+        self.name: str = name
     
     @property
     def parent(self) -> Component:
@@ -33,6 +34,15 @@ class Component(ABC):
     def head(self, head: Component):
         self._head = head
 
+    _is_head: bool = False
+
+    @property
+    def is_head(self) -> bool:
+        return self._is_head
+
+    @is_head.setter
+    def is_head(self, is_head):
+        self._is_head = is_head
     """
     В некоторых случаях было бы полезно определить операции управления детьми
     прямо в базовом классе Component. Таким образом, вам не нужно
@@ -55,16 +65,6 @@ class Component(ABC):
 
         return False
 
-    def is_head(self) -> bool:
-        """
-        Начальник ли компонент
-        """
-
-        if self.head:
-            return True
-        else:
-            return False
-    
     @abstractmethod
     def operation(self) -> str:
         """
@@ -84,12 +84,11 @@ class Employee(Component):
     объекты только делегируют своим субкомпонентам.
     """
 
-    def operation(self) -> str:
-        return "Employee"
+    def __init__(self, name: str = "Employee") -> None:
+        super(Employee, self).__init__(name)
 
-    def is_head(self) -> bool:
-        print("Employee: self._is_head", self._is_head)
-        return self._is_head
+    def operation(self) -> str:
+        return self.name
 
 
 class Composite(Component):
@@ -99,9 +98,9 @@ class Composite(Component):
     детям, а затем «подводят итоги».
     """
 
-    def __init__(self) -> None:
+    def __init__(self, name: str = "Отдел") -> None:
+        super(Composite, self).__init__(name)
         self._children: List[Component] = []
-        self._is_head = False
 
     """
     Составной объект может добавлять или удалять другие компоненты (как простые, так и
@@ -120,10 +119,6 @@ class Composite(Component):
     def is_composite(self) -> bool:
         return True
 
-    def is_head(self) -> bool:
-        # Начальником может быть только сотрудник
-        return False
-    
     def operation(self) -> str:
         """
         Composite определенным образом выполняет свою основную логику. Это
@@ -135,7 +130,7 @@ class Composite(Component):
         results = []
         for child in self._children:
             results.append(child.operation())
-        return f"Отдел({'+'.join(results)})"
+        return f"{self.name}({'+'.join(results)})"
 
 
 def client_code(component: Component) -> None:
@@ -144,6 +139,7 @@ def client_code(component: Component) -> None:
     """
 
     print(f"RESULT: {component.operation()}", end="")
+
 
 def client_code2(component1: Component, component2: Component) -> None:
     """
@@ -157,6 +153,7 @@ def client_code2(component1: Component, component2: Component) -> None:
 
     print(f"RESULT: {component1.operation()}", end="")
 
+
 def set_head(employee_head: Component, composite: Component) -> bool:
     if employee_head.is_composite():
         print("Отдел не может быть начальником)")
@@ -165,12 +162,13 @@ def set_head(employee_head: Component, composite: Component) -> bool:
         print("Начальник назначается отделу!")
         return False
     composite.head = employee_head
+    employee_head.is_head = True
     print("set_head", composite.head)
     return True
 
 
 if __name__ == "__main__":
-    simple = Employee()
+    simple = Employee("Simple")
     client_code(simple)
     print("\n")
     tree = Composite()
@@ -180,10 +178,10 @@ if __name__ == "__main__":
     dept1.add(head1)
     dept1.add(slave1)
     
-    print(head1.is_head())
+    print(head1.is_head)
     if set_head(head1, dept1):
         print("Ok!")
-    print(head1.is_head())
+    print(head1.is_head)
     tree.add(dept1)
     client_code(tree)
     print("\n")
