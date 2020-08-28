@@ -16,10 +16,12 @@ main(int argc, char *argv[])
     Py_SetProgramName(program);  /* optional but recommended */
     Py_Initialize();
     printf("Py_Initialized\n");
-    const char* script_path = "script.py";
+    const char* script_path = "tk1.py";
     //https://stackoverflow.com/questions/3654652/why-does-the-python-c-api-crash-on-pyrun-simplefile
     //PyObject *obj = Py_BuildValue("s", script_path);
     FILE *file = _Py_fopen(script_path, "r+");
+    char* py_argv[] = {strdup(script_path)};
+    PySys_SetArgv(1, py_argv);
     if(file != NULL) {
       PyRun_SimpleFile(file, script_path);
     }
