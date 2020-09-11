@@ -1,0 +1,376 @@
+﻿How to develop Ethereum contract using Python Flask
+Как разработать контракт Ethereum с помощью Python Flask
+
+Storing data in a database is an integral part of any software application.
+Whoever has the control of that database is a master of that data. Blockchain technology stores data into the block inside blockchain network.
+So whenever some node syncs to the network they will get the copy of the data in the block. 
+So there is no particular master of the data in this technology.
+Хранение данных в базе данных является неотъемлемой частью любого программного приложения. 
+Тот, кто контролирует эту базу данных, является хозяином этих данных. Технология блокчейн хранит данные в блоке внутри сети блокчейн, 
+поэтому всякий раз, когда какой-либо узел синхронизируется с сетью, они получают копию данных в блоке. 
+Так что в этой технологии нет конкретного хозяина данных.
+
+In this tutorial, we will write a smart contract(I will explain this further) for persisting user data on the blockchain. 
+We will use python web3(python library for web3) for making and deploying smart contract. 
+Once we have deployed smart contract on the blockchain. We will interact with smart contract using flask API to store some data/information. 
+We are storing that on blockchain so that it will be immutable.
+В этом руководстве мы напишем смарт-контракт (я объясню это далее) для сохранения пользовательских данных в блокчейне. 
+Мы будем использовать python web3 (библиотека python для web3) для создания и развертывания смарт-контракта. 
+После того, как мы развернули смарт-контракт на блокчейне. Мы будем взаимодействовать со смарт-контрактом, используя flask API для хранения некоторых данных / информации. 
+Мы храним их в блокчейне, чтобы они были неизменными.
+
+	Смотри flask1.jpg
+
+Requirements:Python 3.6
+Installation: 1.Create a python virtual environment.
+Virtualenv keeps your Python packages in a virtual environment localized to your project, instead of forcing you to install your packages system-wide.
+Virtualenv сохраняет ваши пакеты Python в виртуальной среде, локализованной для вашего проекта, вместо того, чтобы заставлять вас устанавливать пакеты в масштабе всей системы.
+$ virtualenv -p /usr/bin/python3.6 venv
+$ source venv/bin/activate
+
+2.Now we need ethereum test chain like ganache.
+Ganache is a personal blockchain for Ethereum development you can use to deploy contracts, develop your applications, and run tests.
+2.Теперь нам нужна тестовая цепочка эфириума, такая как ганаш.
+Ganache - это личный блокчейн для разработки Ethereum, который вы можете использовать для развертывания контрактов, разработки приложений и запуска тестов.
+$ npm install -g ganache-cli
+
+3. Install python web3.
+Web3.py is a python library for interacting with ethereum. Its API is derived from the Web3.js Javascript API and should be familiar to anyone who has used web3.js.
+Web3.py - это библиотека Python для взаимодействия с Ethereum. Его API основан на API Javascript Web3.js и должен быть знаком всем, кто использовал web3.js.
+$ pip3 install web3
+
+4. Flask:
+Flask is a microframework for Python
+$ pip3 install flask
+
+5. Flask Restful
+Flask-RESTful is an extension for Flask that adds support for quickly building REST APIs.
+$ pip3 install flask-restful
+
+6. Flask Marshmallow
+Flask marshmallow is an object serialization/deserialization library
+$ pip3 install flask-marshmallow
+
+	Start Ethereum Test blockchain server.
+To deploy smart contract we should start test ethereum server. We are using ganache for testing. Type below command in terminal.
+$ ganache-cli
+	Запустите тестовый блокчейн-сервер Ethereum.
+Чтобы развернуть смарт-контракт, мы должны запустить тестовый сервер Ethereum. Для тестирования мы используем ганаш. Введите команду ниже в терминале.$ ganache-cli
+
+	Смотри flask2.png
+
+Ganache gives us 10 default test accounts with 100 fake ethers in each account for transaction. We will use these accounts for deploying and setting values in contracts.
+Ganache предоставляет нам 10 тестовых учетных записей по умолчанию со 100 поддельными эфирами в каждой учетной записи для транзакции. 
+Мы будем использовать эти учетные записи для развертывания и установки значений в контрактах.
+
+	Смотри flask3.png
+
+We can see the gas prize and limit along with host:port on which ganache is deployed. We will need this while deploying contract.
+Мы можем видеть цену и лимит газа вместе с host: port, на котором развернут ганаш. Нам это понадобится при развертывании контракта.
+
+	Create user.sol file
+Now we will write the smart contract in solidity.Solidity is the language to write smart contract on ethereum.
+Smart contract consists of data which we are going to store on blockchain with optional validation functions on the data and getter, setter method for accessing data.
+Создать файл user.solТеперь мы напишем смарт-контракт в solidity. Solidity - это язык для написания смарт-контрактов на Ethereum. 
+Смарт-контракт состоит из данных, которые мы собираемся хранить в блокчейне, с дополнительными функциями проверки данных и методом getter, setter для доступа к данным.
+
+For example, to make an attendance register on blockchain you will have an array of user objects.It will have the getter, setter method for accessing user.
+Since each user can mark her attendance only once per day, you need a validation function to check it.
+The smart contract is very similar to the application which we normally develop in any other language.
+Например, чтобы создать регистр посещаемости в блокчейне, у вас будет массив пользовательских объектов. У него будет метод получения и установки для доступа к пользователю. 
+Поскольку каждый пользователь может отмечать свое присутствие только один раз в день, вам понадобится функция проверки для теста этого. 
+Смарт-контракт очень похож на приложение, которое мы обычно разрабатываем на любом другом языке.
+
+In below file, we are building simple user contract with the getter, setter functions.
+В файле ниже мы создаем простой пользовательский контракт с функциями получения и установки.
+
+1.Declare solidity compiler version in .sol file.
+Объявить версию компилятора Solidity в файле .sol.
+pragma solidity ^0.4.21;
+To know which compiler version used
+Чтобы узнать, какая версия компилятора используется
+$ solidity — version
+
+2. Import library file. we should use libraries for common utility functions.
+Libraries are only compiled once and used again and again(click here for some good library resources).
+2. Импортируйте файл библиотеки. мы должны использовать библиотеки для общих служебных функций. 
+Библиотеки компилируются только один раз и используются снова и снова (щелкните здесь, чтобы просмотреть некоторые полезные ресурсы библиотеки).
+http://source%20https//github.com/ethereum/dapp-bin/tree/master/library/
+	code:import "stringUtils.sol";
+
+3. Declare contract for user
+Объявить договор для пользователя
+	code:contract userRecords {}
+
+4. Now for the basic demo, we are going to store name and gender information about the user. So initialize this two variables using struct and enum data types.
+4. Теперь, что касается базовой демонстрации, мы собираемся сохранить информацию об имени и поле пользователя. так, инициализируйте эти две переменные, используя типы данных struct и enum.
+	code:// enum type variable to store user gender переменная типа перечисления для хранения пола пользователя
+enum genderType { male, female } 
+// Actual user object which we will store in ethereum contract Фактический пользовательский объект, который мы будем хранить в контракте эфириума
+struct user{ 
+    string name; genderType gender; 
+}
+
+5. Now we will declare user object of type user(struct). You can also declare it as public 
+to access it from outside the contract(For visibility scope click here).
+5. Теперь объявим пользовательский объект типа user (struct). Вы также можете объявить его общедоступным, 
+чтобы получить к нему доступ извне контракта (для просмотра области видимости щелкните здесь). https://solidity.readthedocs.io/en/v0.4.24/contracts.html#visibility-and-getters
+	code: user user_obj;
+
+6. Now add getter, setter methods for the user object. We are going to persist every user’s information on blockchain.
+We should always make this method public as we will access them from outside the contract.
+6. Теперь добавьте методы получения и установки для пользовательского объекта. Мы собираемся сохранить информацию о каждом пользователе в блокчейне. 
+Мы всегда должны делать этот метод общедоступным, так как мы будем получать к ним доступ вне контракта.
+	code:
+// set user public function установить пользователя
+// This is similar to persisting object in db. Это похоже на сохранение объекта в db.
+function setUser(string name, string gender) public {
+    genderType gender_type = getGenderFromString(gender);
+    user_obj = user({name:name, gender: gender_type});
+}
+// get user public function получить пользователя
+// This is similar to getting object from db.
+function getUser() public returns (string, string) { 
+    return (user_obj.name, getGenderToString(user_obj.gender));
+}
+
+7. Notice that we are using two internal helper functions getGenderFromString() and getGenderToString(). 
+Lets add this internal functions. Declare them internal as we are not going to use them outside.
+7. Обратите внимание, что мы используем две внутренние вспомогательные функции: getGenderFromString () и getGenderToString (). 
+Давайте добавим эти внутренние функции. Объявите их внутренними, так как мы не собираемся использовать их снаружи.
+	code:
+// Internal function to convert genderType enum from string
+function getGenderFromString(string gender) internal returns(genderType) {
+    if(StringUtils.equal(gender, "male")) {
+        return genderType.male;
+    } else {
+        return genderType.female;
+    }
+}
+// Internal function to convert genderType enum to string
+function getGenderToString(genderType gender) internal returns (string) {
+    if(gender == genderType.male) {
+        return "male";
+    } else {
+        return "female";
+    }
+}
+We are using stringUtils.equal() library function. As this version of solidity doesn’t support string compare using (==).
+Мы используем библиотечную функцию stringUtils.equal (). Поскольку эта версия Solidity не поддерживает сравнение строк с помощью (==).
+
+8. Now our contract that is user.sol file will look like below:
+8. Теперь наш контракт, который представляет собой файл user.sol, будет выглядеть следующим образом:
+
+	Смотри user.sol
+
+	Compile and deploy above solidity file using python script.
+	Скомпилируйте и разверните указанный выше файл solidity с помощью скрипта Python.
+
+1.In the below python script we need to instantiate test ethereum node using python-web3. We are setting ganche url as a test ethereum node. 
+We will use below w3 object for deploying contract.
+1.В приведенном ниже скрипте python нам нужно создать экземпляр тестового узла ethereum с помощью python-web3. Мы устанавливаем URL-адрес ganche в качестве тестового узла Ethereum. 
+Мы будем использовать ниже объект w3 для развертывания контракта.
+	code:
+from web3 import Web3
+# web3.py instance
+w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
+
+2. Now we will compile solidity code. To compile solidity code we are using py-solc that is python extension for solidity compiler.
+2. Теперь скомпилируем solidity код. Для компиляции кода Solidity мы используем py-solc https://github.com/ethereum/py-solc, который является расширением Python для компилятора Solidity.
+	code:
+from solc import compile_files
+# compile all contract files
+contracts = compile_files(['user.sol', 'stringUtils.sol'])
+# separate main file and link file отдельный основной файл и файл ссылки
+main_contract = contracts.pop("user.sol:userRecords")
+library_link = contracts.pop("stringUtils.sol:StringUtils")
+
+3. Whenever you compile a .sol file with the import statement. We also need to link deploy address of the import file along with the main contract. 
+So for that deploy all links first by compiling it(If already deployed then save the address) See below image main contract bin.
+3. Каждый раз, когда вы компилируете файл .sol с оператором импорта. Нам также необходимо связать адрес развертывания файла импорта вместе с основным контрактом. 
+Поэтому для этого сначала разверните все ссылки, скомпилировав их (если они уже развернуты, сохраните адрес). См. Ниже изображение основного контракта.
+
+	Смотри flask4.png
+
+When you compile your main contract and if you see bin part of it you will find “_stringUtils.sol:StringUtils___________” for the library(it can be for the contract as well) 
+which we are importing. This part we should replace with the library address by deploying it before contract.
+Когда вы компилируете свой основной контракт и видите его часть bin, вы найдете «_stringUtils.sol: StringUtils ___________» для библиотеки (это может быть и для контракта), 
+который мы импортируем. Эту часть мы должны заменить на адрес библиотеки, развернув ее до заключения контракта.
+
+4. Then we will link the library address with the main contract.
+4. Затем мы свяжем адрес библиотеки с основным контрактом.
+	code:
+from solc import link_code
+def deploy_contract(contract_interface):
+    # Instantiate and deploy contract Создать и развернуть контракт
+    contract = w3.eth.contract(
+        abi=contract_interface['abi'],
+        bytecode=contract_interface['bin']
+    )
+    # Get transaction hash from deployed contract Получить хэш транзакции из развернутого контракта
+    tx_hash = contract.deploy(
+        transaction={'from': w3.eth.accounts[1]}
+    )
+    # Get tx receipt to get contract address Получите квитанцию tx, чтобы получить адрес контракта
+    tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
+    return tx_receipt['contractAddress']
+library_address = {
+    "stringUtils.sol:StringUtils": deploy_contract(library_link)
+}
+main_contract['bin'] = link_code(
+    main_contract['bin'], library_address
+)
+
+After linking see below image of main contract bin После связывания см. Изображение основного контракта в двоичном виде ниже.
+
+	Смотри flask5.png
+
+You will see import library bin has been added. Вы увидите, что bin библиотеки импорта была добавлена.
+
+5. Now deploy main contract using our w3 object. Use default address from ethereum account {‘from’: w3.eth.accounts[1]} for deployment.
+5. Теперь разверните основной контракт, используя наш объект w3. Используйте адрес по умолчанию из аккаунта ethereum {‘from’: w3.eth.accounts [1]} для развертывания.
+	code:
+def deploy_contract(contract_interface):
+    # Instantiate and deploy contract
+    contract = w3.eth.contract(
+        abi=contract_interface['abi'],
+        bytecode=contract_interface['bin']
+    )
+    # Get transaction hash from deployed contract
+    tx_hash = contract.deploy(
+        transaction={'from': w3.eth.accounts[1]}
+    )
+    # Get tx receipt to get contract address
+    tx_receipt = w3.eth.getTransactionReceipt(tx_hash)
+    return tx_receipt['contractAddress']
+contract_address = deploy_contract(main_contract)
+
+You will see below lines in the tab where your ganache test server is running. Вы увидите следующие строки на вкладке, на которой работает ваш тестовый сервер ganache.
+
+	Смотри flask6.png
+
+This is the same info which you will get in tx_receipt after contract deployment. Это та же информация, которую вы получите в tx_receipt после развертывания контракта.
+
+6. Now store abi and contract_address in json file. so that we can use it later in flask api for storing user object in contract.
+6. Теперь сохраните abi и contract_address в файле json. так что мы можем использовать его позже в flask api для хранения пользовательского объекта в контракте.
+
+	code:
+# add abi(application binary interface) and transaction reciept in json file добавить abi (бинарный интерфейс приложения) и квитанцию транзакции в json файле
+with open('data.json', 'w') as outfile:
+    data = {
+       "abi": main_contract['abi'],
+       "contract_address": deploy_contract(main_contract)
+    }
+    json.dump(data, outfile, indent=4, sort_keys=True)
+
+7. Now our complete script will look like below
+7. Теперь наш полный сценарий будет выглядеть так, как показано ниже.
+	Смотри c.py
+
+	Create flask api to store different values for user.
+	Создайте flask api для хранения различных значений для пользователя.
+
+You will deploy contract only once. But using its address you will store data again and again. 
+Similarly, in the world of DB, you will define model/schema only once but you will add different rows/document in db.
+Вы развернете контракт только один раз. Но используя его адрес, вы будете хранить данные снова и снова. 
+Точно так же в мире DB вы определяете модель / схему только один раз, но вы добавляете разные строки / документ в db.
+
+1.We will make flask post api to get user info from the user and return success.
+1. Мы создадим post api для flask, чтобы получать информацию о пользователе и возвращать успех.
+	code:
+from flask import Flask, Response, request, jsonify
+from marshmallow import Schema, fields, ValidationError
+def check_gender(data):
+    valid_list = ["male", "female"]
+    if data not in valid_list:
+        raise ValidationError(
+            'Invalid gender. Valid choices are'+ valid_list
+        )
+#For api validations
+class UserSchema(Schema):
+    name = fields.String(required=True)
+    gender = fields.String(required=True, validate=check_gender)
+# Initializing flask app
+app = Flask(__name__)
+# api to set new user every api call
+@app.route("/blockchain/user", methods=['POST'])
+def user():
+    body = request.get_json()
+    result, error = UserSchema().load(body)
+    if error:
+        return jsonify(error), 422
+    return jsonify({"data": result}), 200
+
+As this is not flask tutorial I will not elaborate much on this. 
+Our API user will get data from client(curl request) and validate it and return the same to client(curl request)
+Поскольку это не руководство по flask, я не буду подробно останавливаться на нем. 
+Наш пользователь API получит данные от клиента (запрос curl), проверит их и вернет их клиенту (запрос curl).
+
+2. Now we will initialize web3 object for communicating with deployed user contract.
+2. Теперь мы инициализируем объект web3 для связи с развернутым пользовательским контрактом.
+
+	code:
+from web3 import Web3
+# web3.py instance
+w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
+
+3. Now we will get abi and contract address which we have stored earlier in “data.json” file.
+3. Теперь мы получим abi и адрес контракта, которые мы сохранили ранее в файле «data.json».
+
+	code:
+with open("data.json", 'r') as f:
+     datastore = json.load(f)
+     abi = datastore["abi"]
+     contract_address = datastore["contract_address"]
+
+4. Chose default account address for transactions. Each time you set new values for user in contract. You will give some gas from your wallet.
+4. Выберите адрес учетной записи по умолчанию для транзакций. Каждый раз, когда вы устанавливаете новые значения для пользователя в контракте, вы даете немного газа из кошелька.
+
+	code:
+w3.eth.defaultAccount = w3.eth.accounts[1]
+
+5. Finally you will set the values you are getting in api call to user object in ethereum contract.
+5. Наконец, вы установите значения, которые вы получаете при вызове API для пользовательского объекта в контракте Ethereum.
+
+	code:
+@app.route("/blockchain/user", methods=['POST'])
+def user():
+    # Create the contract instance with the newly-deployed address
+    user = w3.eth.contract(address=contract_address, abi=abi)
+    body = request.get_json()
+    result, error = UserSchema().load(body)
+    if error:
+        return jsonify(error), 422
+    tx_hash = user.functions.setUser(
+        result['name'],result['gender']
+    )
+    tx_hash = tx_hash.transact()
+    # Wait for transaction to be mined...
+    w3.eth.waitForTransactionReceipt(tx_hash)
+    user_data = user.functions.getUser().call()
+    return jsonify({"data": user_data}), 200
+
+We are first getting deployed contract using abi and contract_address.
+Сначала мы получаем развернутый контракт с использованием abi и contract_address.
+	code:
+user = w3.eth.contract(address=contract_address, abi=abi)
+
+Then we can call any contract public functions using the contract instance.After setting values for user we will make it public by using transact() method. 
+http://web3py.readthedocs.io/en/stable/contracts.html#web3.contract.ContractFunction.transact
+This will make new user value added in ethereum block.
+Затем мы можем вызывать любые публичные функции контракта, используя экземпляр контракта. После установки значений для пользователя мы сделаем его публичным с помощью метода transact (). 
+http://web3py.readthedocs.io/en/stable/contracts.html#web3.contract.ContractFunction.transact
+Это добавит новую пользовательское значение в блок Ethereum.
+
+Now we can get already set values in the contract using call() http://web3py.readthedocs.io/en/stable/contracts.html#web3.contract.ContractFunction.call
+method this will call contract function without adding any block in blockchain.
+Теперь мы можем получить уже установленные значения в контракте с помощью метода call (), 
+который вызовет функцию контракта без добавления какого-либо блока в цепочку блоков.
+	code:
+user_data = user.functions.getUser().call()
+
+	Our final code for api file will look like below. Save this as “app.py”
+Наш окончательный код для файла api будет выглядеть, как показано ниже. Сохраните это как «app.py»
+	
+	see app.py
+

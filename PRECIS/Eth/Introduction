@@ -1,0 +1,58 @@
+﻿https://web3py.readthedocs.io/en/stable/
+Introduction
+Web3.py is a Python library for interacting with Ethereum.
+It’s commonly found in decentralized apps (dapps) to help with sending transactions, interacting with smart contracts, reading block data, and a variety of other use cases.
+The original API was derived from the Web3.js Javascript API, but has since evolved toward the needs and creature comforts of Python developers.
+Введение Web3.py - это библиотека Python для взаимодействия с Ethereum.Обычно он используется в децентрализованных приложениях (dapps) для помощи в отправке транзакций, 
+взаимодействии со смарт-контрактами, чтении данных блоков и множестве других вариантов использования.Исходный API был получен из API Javascript Web3.js, но с тех пор 
+эволюционировал в соответствии с потребностями и удобствами разработчиков Python.
+Getting Started
+Your next steps depend on where you’re standing:
+Unfamiliar with Ethereum? → ethereum.org
+Looking for Ethereum Python tutorials? → ethereum.org/python
+Ready to code? → Quickstart
+Interested in a quick tour? → Overview
+Need help debugging? → StackExchange
+Like to give back? → Contribute
+Want to chat? → Gitter
+НачинаяВаши следующие шаги зависят от того, где вы стоите:Незнакомы с Ethereum? → ethereum.org
+Ищете руководства по Ethereum Python? → ethereum.org/python
+Готовы кодировать? → Быстрый старт Заинтересованы в быстрой экскурсии? → Обзор
+Нужна помощь в отладке? → StackExchangeХотите отдать? → Внести вклад Хотите пообщаться? → Гиттер
+Table of Contents                 Оглавление                            
+Intro                             вступление                            
+Quickstart                        Быстрый старт                         
+Overview                          Обзор                                 
+Release Notes                     Примечания к выпуску                  
+Guides                            Гиды                                 
+Your Ethereum Node                Ваш узел Ethereum                      
+Providers                         Провайдеры                            
+Examples                          Примеры                               
+Troubleshooting                   Исправление проблем                   
+Working with Local Private Keys   Работа с локальными закрытыми ключами 
+Filtering                         Фильтрация                            
+Contracts                         Контракты                             
+Middleware                        Промежуточное ПО                      
+Web3 Internals                    Web3 Внутреннее устройство            
+ABI Types                         Типы ABI                              
+ethPM                             ethPM                                 
+Ethereum Name Service             Служба имен Ethereum                  
+Migrating your code from v4 to v5 Перенос кода с v4 на v5               
+Migrating your code from v3 to v4 Перенос кода с v3 на v4               
+API                               API                                   
+Web3 API                          Web3 API                              
+web3.eth API                      web3.eth API                          
+Package Manager API               API диспетчера пакетов                
+Net API                           Net API                               
+Miner API                         Майнер API                            
+Geth API                          Geth API                              
+Parity API                        API четности                          
+Gas Price API                     API цены на газ                       
+ENS API                           ENS API                               
+Community                         Сообщество                            
+Contributing                      Содействие                            
+Code of Conduct                   Правила поведения                     
+Indices and tables                Индексы и таблицы                     
+Index                             Индекс                                
+Module Index                      Указатель модуля                      
+Search Page                       Страница поиска                       
