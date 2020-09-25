@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <set>
+#include <cmath>
 
 // Генерируем рандомное число между значениями min и max.
 // Предполагается, что функцию srand() уже вызывали
@@ -12,6 +13,18 @@ int getRandomNumber(int min, int max)
 	static const double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
 	// Равномерно распределяем рандомное число в нашем диапазоне
 	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
+}
+
+// количество вхождений символа ch в str
+int count(char ch, std::string str)
+{
+	int coun_ch = 0;
+	for (auto cch : str)
+	{
+		if (cch == ch)
+			coun_ch++;
+	}
+	return coun_ch;
 }
 
 int main()
@@ -33,7 +46,9 @@ int main()
 	int cow = 0;
 	int bull = 0;
 	std::string current = "nnnn";
-	//std::set<char> set_tryg;
+	std::set<char> set_tryg;
+	std::set<char> set_from_user;
+	int bovine;
 	while (cow != 4)
 	{
 		cow = 0;
@@ -44,32 +59,30 @@ int main()
 		//std::cout << "Вы ввели " << from_user << "\n";
 		for (int i = 0; i < 4; ++i)
 		{
+			set_tryg.emplace(try_guess[i]);
+			set_from_user.emplace(from_user[i]);
 			for (int j = 0; j < 4; ++j)
 			{
+				
 				if (try_guess[i] == from_user[j])
 				{
 					if (i == j) { 
 						cow++;
-						if (current[i] == 'n') current[i] = 'c'; else 
-						{
-							std::cout << current[i] << " in i (" << i << ") in current cow " << std::endl;
-							//cow--;
-						}
-							
 					}
 					else
 					{
-						bull++;
-						if (current[i] == 'n') current[i] = 'b'; else
-						{
-							std::cout << current[i] << " in i (" << i << ") in current bull " << std::endl;
-							bull--;
-						}
+						//bull++;
 					}
 				}
 			}
 		}
+		bovine = 0;
+		for ( auto digit : set_tryg)
+		{
+			bovine += min(count(digit, try_guess), count(digit, from_user));
+		}
 		
+		bull = bovine - cow;
 		if (cow == 1)
 		{
 			std::cout << cow << " корова ";
