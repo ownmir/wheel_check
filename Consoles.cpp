@@ -5,6 +5,7 @@
 #include <string>
 #include <set>
 #include <cmath>
+#include <iomanip> // для std::setprecision()
 
 // Генерируем рандомное число между значениями min и max.
 // Предполагается, что функцию srand() уже вызывали
@@ -15,6 +16,20 @@ int getRandomNumber(int min, int max)
 	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
 }
 
+void init_array()
+{
+	double array[365] = { 0.0 };
+	// http://www.c-cpp.ru/books/formatirovanie-s-pomoshchyu-funkciy-chlenov-ios
+	std::cout.setf(std::ios::showpoint);
+	std::cout << "array 1 " << std::setprecision(1) << array[1] << std::endl;
+	double value = 0.0;
+	int i;
+	for (i = 1; i < 7; i++) {
+		std::cout << "Точность " << i << ": ";
+		std::cout << std::setprecision(i) << value << std::endl;
+		value += 0.11111;
+	}
+}
 // количество вхождений символа ch в str
 int count(char ch, std::string str)
 {
@@ -27,10 +42,8 @@ int count(char ch, std::string str)
 	return coun_ch;
 }
 
-int main()
+void cowsbulls()
 {
-	SetConsoleCP(1251);// установка кодовой страницы win-cp 1251 в поток ввода
-	SetConsoleOutputCP(1251); // установка кодовой страницы win-cp 1251 в поток вывода
 	srand(static_cast<unsigned int>(time(0))); // устанавливаем значение системных часов в качестве стартового числа
 
 	int tryg;
@@ -63,10 +76,10 @@ int main()
 			set_from_user.emplace(from_user[i]);
 			for (int j = 0; j < 4; ++j)
 			{
-				
+
 				if (try_guess[i] == from_user[j])
 				{
-					if (i == j) { 
+					if (i == j) {
 						cow++;
 					}
 					else
@@ -77,11 +90,11 @@ int main()
 			}
 		}
 		bovine = 0;
-		for ( auto digit : set_tryg)
+		for (auto digit : set_tryg)
 		{
 			bovine += min(count(digit, try_guess), count(digit, from_user));
 		}
-		
+
 		bull = bovine - cow;
 		if (cow == 1)
 		{
@@ -108,17 +121,43 @@ int main()
 		std::cout << "current " << current << std::endl;
 	}
 	std::cout << " Поздравляем! Вы угадали число!! " << std::endl;
+}
+namespace animals
+{
+	enum animals
+	{
+		CHICKEN, //    0
+		LION, //       1
+		GIRAFFE, //    2
+		ELEPHANT, //   3
+		DUCK, //       4
+		SNAKE, //      5
+		MAX_ANIMALS // 6
+	};
+}
+void a()
+{
+	
+	int pows[animals::MAX_ANIMALS];
+	pows[animals::CHICKEN] = 2;
+	pows[animals::LION] = 4;
+	pows[animals::GIRAFFE] = 2;
+	pows[animals::ELEPHANT] = 4;
+	pows[animals::DUCK] = 2;
+	pows[animals::SNAKE] = 0;
+	std::cout << "An elephant has " << pows[animals::ELEPHANT] << " pows.\n";
+
+}
+int main()
+{
+	SetConsoleCP(1251);// установка кодовой страницы win-cp 1251 в поток ввода
+	SetConsoleOutputCP(1251); // установка кодовой страницы win-cp 1251 в поток вывода
+	
+	//cowsbulls();
+	//init_array();
+	a();
+
 	return 0;
 
 }
 
-// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
-// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
-
-// Советы по началу работы 
-//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
-//   2. В окне Team Explorer можно подключиться к системе управления версиями.
-//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
-//   4. В окне "Список ошибок" можно просматривать ошибки.
-//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
-//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
