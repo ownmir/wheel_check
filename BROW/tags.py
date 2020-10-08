@@ -1,7 +1,7 @@
 def is_tag(sour):
     len_sour = len(sour)
     if len_sour < 3:
-        # ваш teg не может быть менее 3-х символов
+        # ваш tag не может быть менее 3-х символов
         return False
     first = sour[0]
     # print("first", first)

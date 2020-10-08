@@ -72,7 +72,7 @@ def __init__(_beneficiary: address, _bidding_time: timedelta):
     self.auctionStart = block.timestamp
     self.auctionEnd = self.auctionStart + _bidding_time
 
-# Bid on the auction with the value sent Ставка на аукцион с отправленной стоимостью
+# Bid on the auction with the value sent Ставка на аукцион со стоимостью отправленной 
 # together with this transaction.        вместе с этой транзакцией.                 
 # The value will only be refunded if the Стоимость будет возвращена, только если    
 # auction is not won.                    аукцион не выигран.                        
@@ -88,3 +88,152 @@ def bid():
     # Track new high bid Отследить новую высокую ставку
     self.highestBidder = msg.sender
     self.highestBid = msg.value
+
+# Withdraw a previously refunded bid. The withdraw pattern is      Отозвать ранее возвращенную ставку. Схема вывода                                        
+# used here to avoid a security issue. If refunds were directly    используется здесь, чтобы избежать проблем с безопасностью. Если бы возврат был напрямую
+# sent as part of bid(), a malicious bidding contract could block  был прямо отправлен как часть bid (), злонамеренный договор торгов мог заблокировать           
+# those refunds and thus block new higher bids from coming in.     эти возвраты и тем самым блокирует поступление новых более высоких ставок.            
+@public
+def withdraw():
+    pending_amount: wei_value = self.pendingReturns[msg.sender]
+    self.pendingReturns[msg.sender] = 0
+    send(msg.sender, pending_amount)
+
+# End the auction and send the highest bid  Завершите аукцион и отправьте самую высокую ставку
+# to the beneficiary.                       получателю.
+@public
+def endAuction():
+    # It is a good guideline to structure functions that interact      Это хорошее руководство для структурирования функций, которые взаимодействуют
+    # with other contracts (i.e. they call functions or send Ether)    с другими контрактами (т.е. они вызывают функции или отправляют эфир)        
+    # into three phases:                                               на три фазы:                                                                 
+    # 1. checking conditions                                           1. условия проверки                                                          
+    # 2. performing actions (potentially changing conditions)          2. выполнение действий (потенциально меняющие условия)                     
+    # 3. interacting with other contracts                              3. взаимодействие с другими контрактами                                      
+    # If these phases are mixed up, the other contract could call      Если эти фазы перепутаны, другой контракт может вызвать                      
+    # back into the current contract and modify the state or cause     в текущем контракте и изменить состояние или стать причиной                
+    # effects (Ether payout) to be performed multiple times.           эффектов (выплаты эфира), которые будут выполняться несколько раз.            
+    # If functions called internally include interaction with external Если функции, вызываемые изнутри, включают взаимодействие с внешним          
+    # contracts, they also have to be considered interaction with      контрактов, их также необходимо учитывать при взаимодействии с               
+    # external contracts.                                              внешних контрактов.                                                          
+                                                                                                 
+    # 1. Conditions                                  1. Условия                                                                   
+    # Check if auction endtime has been reached      Проверить, не наступило ли время окончания аукциона
+    assert block.timestamp >= self.auctionEnd
+
+    # Check if this function has already been called Проверить, вызывалась ли уже эта функция
+    assert not self.ended
+
+    # 2. Effects
+    self.ended = True
+
+    # 3. Interaction
+    send(self.beneficiary, self.highestBid)
+endcode ======================================================================================================================================
+
+	This example only has a constructor, two methods to call, and variables to manage the contract state.
+В этом примере есть только конструктор, два метода для вызова и переменные для управления состоянием контракта.
+This is all we need for a basic implementation of an auction smart contract.
+Это все, что нам нужно для базовой реализации смарт-контракта на аукционе.
+
+	We begin by declaring variables to keep track of our contract state.
+Начнем с объявления переменных, чтобы отслеживать состояние нашего контракта.
+We initialize a global variable beneficiary by calling public on the datatype address.
+Мы инициализируем глобальную переменную получателя, вызывая public с типом данных address.
+The beneficiary will be the receiver of money from the highest bidder
+Бенефициар будет получателем денег от участника, предложившего самую высокую цену.
+We also initialize the variables auctionStart and auctionEnd with the datatype timestamp to manage the open auction period 
+and highestBid with datatype wei_value, the smallest denomination of ether, to manage auction state.
+Мы также инициализируем переменные auctionStart и auctionEnd типом данных метка времени для управления периодом открытого аукциона 
+и highBid с типом данных wei_value, наименьшим номиналом эфира, для управления состоянием аукциона.
+The variable ended is a boolean to determine whether the auction is officially over.
+Переменная ended - это логическое значение, определяющее, окончен ли аукцион официально.
+
+	All the variables are passed into the public function. By declaring the variable public, the variable is callable by external contracts.
+Все переменные передаются в публичную функцию. Объявленная общедоступной, переменная может быть вызвана внешними контрактами.
+Initializing the variables without the public function defaults to a private declaration and thus only accessible to methods within the same contract.
+При инициализации переменных без общедоступной функции по умолчанию используется приватное объявление, и поэтому они доступны только для методов 
+в рамках одного контракта.
+The public function additionally creates a ‘getter’ function for the variable, accessible through an external call such as contract.beneficiary().
+Публичная функция дополнительно создает функцию «получения» для переменной, доступную через внешний вызов, такой как contract.beneficiary ().
+
+Now, the constructor.
+
+	The contract is initialized with two arguments: _beneficiary of type address and _bidding_time with type timedelta, the time difference between 
+the start and end of the auction. 
+Контракт инициализируется двумя аргументами: _beneficiary типа address и _bidding_time с типом timedelta, разницей во времени между 
+началом и окончанием аукциона.
+We store these two pieces of information into the contract variables self.beneficiary and self.auctionEnd. 
+Мы сохраняем эти две части информации в переменных контракта self.beneficiary и self.auctionEnd.
+We have access to the current time by calling block.timestamp.
+мы получем доступ к текущему времени, вызвав block.timestamp.
+block is an object available within any Vyper contract and provides information about the block at the time of calling.
+block - это объект, доступный в любом контракте Vyper, который предоставляет информацию о блоке во время вызова.
+Similar to block, another important object available to us within the contract is msg, which provides information on the method caller.
+
+	With initial setup out of the way, lets look at how our users can make bids.
+После первоначальной настройки давайте посмотрим, как наши пользователи могут делать ставки.
+
+	The @payable decorator allows a user to send some ether to the contract in order to call the decorated method. 
+Декоратор @payable позволяет пользователю отправить немного эфира в контракт, чтобы вызвать декорированный метод.
+In this case, a user wanting to make a bid calls the bid() method while sending an amount equal to their desired bid (not including gas fees).
+В этом случае пользователь, желающий сделать ставку, вызывает метод bid (), отправляя сумму, равную желаемой ставке (не включая плату за газ).
+When calling any method within a contract, we are provided with a built-in variable msg and we can access the public 
+address of any method caller with msg.sender.
+При вызове любого метода в контракте нам предоставляется встроенная переменная msg, и мы можем получить доступ к общедоступному 
+адресу любого вызывающего метода с помощью msg.sender.
+Similarly, the amount of ether a user sends can be accessed by calling msg.value.
+Точно так же количество эфира, отправленного пользователем, можно узнать, вызвав msg.value.
+
+	We first check whether the current time is before the auction’s end time using the assert function which takes any boolean statement.
+Сначала мы проверяем, не превышает ли текущее время окончания аукциона, используя функцию assert, которая принимает любое логическое выражение.
+(assert block.timestamp < self.auctionEnd)
+We also check to see if the new bid is greater than the highest bid.
+Мы также проверяем, превышает ли новая ставка максимальную ставку. (assert msg.value > self.highestBid)
+If the two assert statements pass, we can safely continue to the next lines; otherwise, 
+the bid() method throws an error and reverts the transaction
+Если две проверки assert пройдут успешно, мы можем безопасно перейти к следующим строкам; в противном случае 
+метод bid () выдает ошибку и отменяет транзакцию
+If the two assert statements and the check that the previous bid is not equal to zero pass, we can safely conclude that 
+we have a valid new highest bid. 
+Если два оператора assert и проверка того, что предыдущая ставка не равна нулю, проходят, мы можем с уверенностью заключить, что 
+у нас есть действительная новая максимальная ставка.
+We send back the previous highestBid to the previous highestBidder 
+and set our new highestBid and highestBidder.
+Мы отправляем предыдущую самую высокую ставку предыдущему участнику торгов
+и устанавливаем наши новые самые высокие ставки и участника торгов.
+
+With the endAuction() method, we check whether our current time is past the auctionEnd time 
+we set upon initialization of the contract.
+С помощью метода endAuction () мы проверяем, не прошло ли наше текущее время до времени auctionEnd, 
+которое мы установили при инициализации контракта.
+We also check that self.ended had not previously been set to True. 
+Мы также проверяем, что для self.ended ранее не было установлено значение True.
+We do this to prevent any calls to the method if the auction had already ended, 
+which could potentially be malicious if the check had not been made
+Мы делаем это, чтобы предотвратить любые вызовы метода, если аукцион уже завершился, 
+что потенциально может быть вредоносным, если проверка не была произведена.
+We then officially end the auction by setting self.ended to True and sending the highest bid amount to the beneficiary.
+Затем мы официально завершаем аукцион, установив для self.ended значение True и отправив получателю наибольшую сумму ставки.
+
+	Next Steps
+
+https://vyper.readthedocs.io/
+This introduction and example was taken from the official Vyper documentation, which is your best resource. Recommended next steps are:
+Vyper by example
+Structure of a contract
+Это введение и пример взяты из официальной документации Vyper, которая является вашим лучшим ресурсом. Рекомендуемые следующие шаги:
+Вайпер на примере
+Структура контракта
+
+https://vyper.readthedocs.io/en/stable/vyper-by-example.html
+
+of course, no smart contract tutorial is complete without a note on security.
+Конечно, ни одно руководство по смарт-контракту не обходится без упоминания о безопасности.
+
+	Note:
+It’s always important to keep security in mind when designing a smart contract. 
+При разработке смарт-контракта всегда важно помнить о безопасности.
+As any application becomes more complex, the greater the potential for introducing new risks. 
+Чем сложнее любое приложение, тем больше вероятность появления новых рисков.
+Thus, it’s always good practice to keep contracts as readable and simple as possible.
+Таким образом, всегда рекомендуется делать контракты максимально удобочитаемыми и простыми.
