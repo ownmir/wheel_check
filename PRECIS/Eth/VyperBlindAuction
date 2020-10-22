@@ -1,0 +1,94 @@
+﻿!!! Prev file: Vyper !!!
+
+Before we dive into our other examples, let’s briefly explore another type of auction that you can build with Vyper.
+Прежде чем мы перейдем к другим нашим примерам, давайте кратко изучим другой тип аукциона, который вы можете создать с помощью Vyper.
+Similar to its counterpart written in Solidity, this blind auction 
+allows for an auction where there is no time pressure towards the end of the bidding period.
+Подобно своему аналогу, написанному на Solidity, этот слепой аукцион 
+позволяет проводить аукцион без ограничения по времени к (по отношению к) концу периода торгов.
+
+code: =================================================================================================================================
+# Blind Auction # Adapted to Vyper from [Solidity by Example](https://github.com/ethereum/solidity/blob/develop/docs/solidity-by-example.rst#blind-auction-1)
+
+struct Bid:
+  blindedBid: bytes32
+  deposit: uint256
+
+# Note: because Vyper does not allow for dynamic arrays, we have limited the
+# Примечание: поскольку Vyper не поддерживает динамические массивы, мы ограничили
+# number of bids that can be placed by one address to 128 in this example
+# количество ставок, которые могут быть размещены по одному адресу до 128 в этом примере
+MAX_BIDS: constant(int128) = 128
+
+# Event for logging that auction has ended
+# Событие для регистрации того, что аукцион закончился
+event AuctionEnded:
+    highestBidder: address
+    highestBid: uint256
+
+# Auction parameters
+beneficiary: public(address)
+biddingEnd: public(uint256)
+revealEnd: public(uint256)
+
+# Set to true at the end of auction, disallowing any new bids
+# Установите значение true в конце аукциона, запрещая любые новые ставки
+ended: public(bool)
+
+# Final auction state
+# Окончательное состояние аукциона
+highestBid: public(uint256)
+highestBidder: public(address)
+
+# State of the bids
+# Состояние ставок
+bids: HashMap[address, Bid[128]]
+bidCounts: HashMap[address, int128]
+
+# Allowed withdrawals of previous bids
+# Разрешен отзыв предыдущих ставок
+pendingReturns: HashMap[address, uint256]
+
+# Create a blinded auction with `_biddingTime` seconds bidding time and
+# `_revealTime` seconds reveal time on behalf of the beneficiary address
+# `_beneficiary`.
+# Создайте аукцион вслепую с временем ставки `_biddingTime` в секундах и
+# `_revealTime` секунд показывают время от имени адреса получателя
+# `_beneficiary`.
+@external
+def __init__(_beneficiary: address, _biddingTime: uint256, _revealTime: uint256):
+    self.beneficiary = _beneficiary
+    self.biddingEnd = block.timestamp + _biddingTime
+    self.revealEnd = self.biddingEnd + _revealTime
+
+# Place a blinded bid with:
+# Сделайте слепую ставку с помощью:
+#
+# _blindedBid = keccak256(concat(
+#       convert(value, bytes32),
+#       convert(fake, bytes32),
+#       secret)
+# )
+#
+# The sent ether is only refunded if the bid is correctly revealed in the 
+# Отправленный эфир возвращается только в том случае, если ставка правильно указана в
+# revealing phase. The bid is valid if the ether sent together with the bid is
+# фаза раскрытия. Ставка действительна, если отправленный вместе со ставкой эфир
+# at least "value" and "fake" is not true. Setting "fake" to true and sending
+# хотя бы "значение" и "подделка" не соответствуют действительности. Установка "фальшивка" на true и отправка
+# not the exact amount are ways to hide the real bid but still make the
+# не точная сумма - это способ скрыть реальную ставку, но все же сделать
+# required deposit. The same address can place multiple bids.
+# обязательный депозит. На один и тот же адрес можно делать несколько ставок.
+@external
+@payable
+def bid(_blindedBid: bytes32):
+    # Check if bidding period is still open
+    # Проверить, открыт ли еще период торгов
+    assert block.timestamp < self.biddingEnd
+
+    # Check that payer hasn't already placed maximum number of bids
+    # Убедитесь, что плательщик еще не разместил максимальное количество ставок
+    numBids: int128 = self.bidCounts[msg.sender]
+    assert numBids < MAX_BIDS
+

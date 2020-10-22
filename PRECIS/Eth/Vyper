@@ -237,3 +237,5 @@ As any application becomes more complex, the greater the potential for introduci
 Чем сложнее любое приложение, тем больше вероятность появления новых рисков.
 Thus, it’s always good practice to keep contracts as readable and simple as possible.
 Таким образом, всегда рекомендуется делать контракты максимально удобочитаемыми и простыми.
+
+!!! Next file: VyperBlindAuction !!!
