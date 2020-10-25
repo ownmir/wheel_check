@@ -1,0 +1,180 @@
+﻿	TYPES
+Vyper is a statically typed language. The type of each variable (state and local) must be specified or 
+at least known at compile-time. 
+Vyper provides several elementary types which can be combined to form complex types.
+
+In addition, types can interact with each other in expressions containing operators.
+	Типы
+Vyper - это язык со статической типизацией. Тип каждой переменной (состояния и локальной) должен быть указан или, 
+по крайней мере, известен во время компиляции. 
+Vyper предоставляет несколько элементарных типов, которые можно комбинировать для образования сложных типов.
+
+Кроме того, типы могут взаимодействовать друг с другом в выражениях, содержащих операторы.
+
+	VALUE TYPES
+The following types are also called value types because variables of these types will always be passed by value, i.e. they are always copied when they are used as function arguments or in assignments.
+
+Boolean
+Keyword: bool
+
+A boolean is a type to store a logical/truth value.
+
+Values
+The only possible values are the constants True and False.
+
+Operators not and or == !=
+
+	ЗНАЧЕНИЕ ТИПОВ
+Следующие типы также называются типами значений, потому что переменные этих типов всегда будут передаваться 
+по значению, т.е. они всегда копируются, когда используются в качестве аргументов функции или в присваиваниях.
+
+Булево
+Ключевое слово: bool
+
+Логическое значение - это тип для хранения логического / истинного значения.
+
+Значения
+Единственные возможные значения - это константы True и False.
+
+Операторы not and or == !=
+
+Сокращение логических операторов (или и и) согласуется с поведением Python.
+
+Signed Integer (128 bit)
+Keyword: int128
+
+A signed integer (128 bit) is a type to store positive and negative integers.
+
+Values
+Signed integer values between -2127 and (2127 - 1), inclusive.
+
+Interger literals cannot have a decimal point even if the decimal value is zero. 
+For example, 2.0 cannot be interpreted as an integer.
+
+Operators
+Comparisons
+Comparisons return a boolean value.
+
+Знаковое целое число (128 бит)
+Ключевое слово: int128
+
+Целое число со знаком (128 бит) - это тип для хранения положительных и отрицательных целых чисел.
+
+Значения
+Целочисленные значения со знаком от -2127 до (2127 - 1) включительно.
+
+Межчисленные литералы не могут иметь десятичную точку, даже если десятичное значение равно нулю. 
+Например, 2.0 нельзя интерпретировать как целое число.
+
+Операторы
+Сравнения
+Сравнения возвращают логическое значение.
+< <= == != >= >
+x and y must be of the type int128.
+x и y должны быть типа int128.
+	Arithmetic Operators
++ - -x Unary minus/Negation * / x ** y Возведение в степень
+
+Unsigned Integer (256 bit)
+Keyword: uint256
+
+An unsigned integer (256 bit) is a type to store non-negative integers.
+
+Values
+Integer values between 0 and (2256-1).
+
+Interger literals cannot have a decimal point even if the decimal value is zero. 
+For example, 2.0 cannot be interpreted as an integer.
+Целое число без знака (256 бит)
+Ключевое слово: uint256
+
+Целое число без знака (256 бит) - это тип для хранения неотрицательных целых чисел.
+
+Значения
+Целочисленные значения от 0 до (2256-1).
+
+Межчисленные литералы не могут иметь десятичную точку, даже если десятичное значение равно нулю. 
+Например, 2.0 нельзя интерпретировать как целое число.
+
+Note
+
+Integer literals are interpreted as int128 by default. In cases where uint256 is more appropriate, 
+such as assignment, the literal might be interpreted as uint256. 
+Example: _variable: uint256 = _literal. In order to explicitly cast a literal to a uint256 use 
+convert(_literal, uint256).
+Запись
+
+Целочисленные литералы по умолчанию интерпретируются как int128. В случаях, когда uint256 более подходит, 
+например, при присваивании, литерал может интерпретироваться как uint256. 
+Пример: _variable: uint256 = _literal. Чтобы явным образом преобразовать литерал в uint256, используйте 
+convert (_literal, uint256).
+
+Operators same int128
+
+	Decimals
+Keyword: decimal
+
+A decimal is a type to store a decimal fixed point value.
+
+Values
+A value with a precision of 10 decimal places between -2127 and (2127 - 1).
+
+In order for a literal to be interpreted as decimal it must include a decimal point.
+	Десятичные дроби
+Ключевое слово: десятичный
+
+Десятичное число - это тип для хранения десятичного значения с фиксированной запятой.
+
+Значения
+Значение с точностью до 10 десятичных разрядов от -2127 до (2127-1).
+
+Чтобы литерал интерпретировался как десятичный, он должен включать десятичную точку.
+
+Operators same int128 and uint256
+
+	Address
+Keyword: address
+
+The address type holds an Ethereum address.
+
+Values
+An address type can hold an Ethereum address which equates to 20 bytes or 160 bits. 
+Address literals must be written in hexadecimal notation with a leading 0x and 
+must be checksummed.
+	Адрес
+Ключевое слово: адрес
+
+Тип адреса содержит адрес Ethereum.
+
+Значения
+Тип адреса может содержать адрес Ethereum, равный 20 байтам или 160 битам. 
+Адресные литералы должны быть записаны в шестнадцатеричной системе счисления с начальным 0x и 
+должны иметь контрольную сумму.
+
+	Members
+Member	Type	Description
+balance	uint256	Balance of an address
+codehash	bytes32	Keccak of code at an address, EMPTY_BYTES32 if no contract is deployed
+codesize	uint256	Size of code deployed an address, in bytes
+is_contract	bool	Boolean indicating if a contract is deployed at an address
+Syntax as follows: _address.<member>, where _address is of the type address and <member> is one of the above keywords.
+
+	Члены
+Тип элемента Описание
+balance uint256 Баланс адреса
+codehash bytes32 Keccak кода по адресу, EMPTY_BYTES32, если контракт не развернут
+codeize uint256 Размер кода, в котором развернут адрес, в байтах
+is_contract bool Логическое значение, указывающее, развернут ли контракт по адресу
+Синтаксис следующий: _address. <member>, где _address - это адрес типа, а <member> - одно из указанных выше ключевых слов.
+
+	Note
+
+Operations such as SELFDESTRUCT and CREATE2 allow for the removal and replacement of bytecode at an address. 
+You should never assume that values of address members will not change in the future.
+
+	Заметка
+
+Такие операции, как SELFDESTRUCT и CREATE2, позволяют удалять и заменять байт-код по адресу. 
+Никогда не следует предполагать, что значения членов адреса не изменятся в будущем.
+
+	
