@@ -1,4 +1,6 @@
-﻿	TYPES
+﻿!!! Prev file: vyperStructureofContract !!!
+
+	TYPES
 Vyper is a statically typed language. The type of each variable (state and local) must be specified or 
 at least known at compile-time. 
 Vyper provides several elementary types which can be combined to form complex types.
@@ -163,7 +165,7 @@ Syntax as follows: _address.<member>, where _address is of the type address and 
 Тип элемента Описание
 balance uint256 Баланс адреса
 codehash bytes32 Keccak кода по адресу, EMPTY_BYTES32, если контракт не развернут
-codeize uint256 Размер кода, в котором развернут адрес, в байтах
+codesize uint256 Размер кода, в котором развернут адрес, в байтах
 is_contract bool Логическое значение, указывающее, развернут ли контракт по адресу
 Синтаксис следующий: _address. <member>, где _address - это адрес типа, а <member> - одно из указанных выше ключевых слов.
 
@@ -177,4 +179,195 @@ You should never assume that values of address members will not change in the fu
 Такие операции, как SELFDESTRUCT и CREATE2, позволяют удалять и заменять байт-код по адресу. 
 Никогда не следует предполагать, что значения членов адреса не изменятся в будущем.
 
-	
+	32-bit-wide Byte Array
+Keyword: bytes32 This is a 32-bit-wide byte array that is otherwise similar to byte arrays.
+Example:
+	32-битный байтовый массив
+Ключевое слово: bytes32 Это 32-битный байтовый массив, который в остальном похож на байтовые массивы.
+Пример:
+	# Declaration объявление
+	hash: bytes32
+	# Assignment присваивание
+	self.hash = _hash
+
+	Operators Операторы
+
+Keyword Ключевое слово Description Описание
+keccak256(x) Return the keccak256 hash as bytes32.
+concat(x, ...) Concatenate multiple inputs.
+slice(x, start=_start, len=_len) Return a slice of _len starting at _start.
+keccak256 (х) Вернуть хеш keccak256 как bytes32.
+concat (х, ...) Объединить несколько входов.
+slice (x, start = _start, len = _len) Возврат фрагмента (среза) _len, начиная с _start.
+
+Where x is a byte array and _start as well as _len are integer values.
+Где x - это байтовый массив, а _start, а также _len - целые числа.
+
+	Byte Arrays
+Keyword: Bytes
+A byte array with a fixed size.
+Массив байтов фиксированного размера.
+
+The syntax being Bytes[maxLen], where maxLen is an integer which denotes the maximum number of bytes. 
+On the ABI level the Fixed-size bytes array is annotated as bytes.
+Синтаксис: Bytes [maxLen], где maxLen - целое число, обозначающее максимальное количество байтов. 
+На уровне ABI массив байтов фиксированного размера аннотируется как байты.
+
+Bytes literals may be given as bytes strings, hexadecimal, or binary.
+Байтовые литералы могут быть представлены как байтовые строки, шестнадцатеричные или двоичные.
+	code:
+bytes_string: Bytes[100] = b"\x01"
+hex_bytes: Bytes[100] = 0x01
+binary_bytes: Bytes[100] = 0b00000001
+
+Strings
+Keyword: String
+Fixed-size strings can hold strings with equal or fewer characters than the maximum length of the 
+string. On the ABI level the Fixed-size bytes array is annotated as string.
+Строки
+Ключевое слово: String
+Строки фиксированного размера могут содержать строки с количеством символов, равным или меньшим, 
+чем максимальная длина строки. На уровне ABI массив байтов фиксированного размера аннотируется как string.
+	code:
+example_str: String[100] = "Test String"
+
+	REFERENCE TYPES
+Reference types do not fit into 32 bytes. Because of this, 
+copying their value is not as feasible as with value types. 
+Therefore only the location, i.e. the reference, of the data is passed.
+	Типы ссылок
+Ссылочные типы не умещаются в 32 байта. Из-за этого 
+копирование их значения не так возможно, как с типами значений. 
+Следовательно, передается только местоположение, то есть ссылка на данные.
+
+	FIXED-SIZE LISTS
+Fixed-size lists hold a finite number of elements which belong to a specified type.
+Lists can be declared with _name: _ValueType[_Integer]. Multidimensional lists are also possible.
+	Списки фиксированного размера
+Списки фиксированного размера содержат конечное число элементов, принадлежащих определенному типу.
+Списки могут быть объявлены с помощью _name: _ValueType [_Integer]. Возможны также многомерные списки.
+
+	code:
+# Defining a list
+exampleList: int128[3]
+
+# Setting values
+exampleList = [10, 11, 12]
+exampleList[2] = 42
+
+# Returning a value
+return exampleList[0]
+
+	Structs
+Structs are custom defined types that can group several variables.
+Struct types can be used inside mappings and arrays. Structs can contain arrays and other structs, 
+but not mappings.
+Struct members can be accessed via struct.argname.
+	Структуры
+Структуры - это типы, определяемые пользователем, которые могут группировать несколько переменных.
+Типы структур можно использовать внутри отображений и массивов. 
+Структуры могут содержать массивы и другие структуры, но не отображения.
+Доступ к членам структуры можно получить через struct.argname.
+
+	MAPPINGS
+Mappings are hash tables that are virtually initialized such that every possible key exists 
+and is mapped to a value whose byte-representation is all zeros: a type’s default value.
+The key data is not stored in a mapping, instead its keccak256 hash used to look up a value. 
+For this reason mappings do not have a length or a concept of a key or value being “set”.
+Mapping types are declared as HashMap[_KeyType, _ValueType].
+_KeyType can be any base or bytes type. Mappings, interfaces or structs are not support as key types.
+_ValueType can actually be any type, including mappings.
+	Сопоставления
+Сопоставления - это хэш-таблицы, которые виртуально инициализируются таким образом, что существует каждый возможный ключ 
+и сопоставляется со значением, байтовым представлением которого являются все нули: значение типа по умолчанию.
+Ключевые данные не хранятся в сопоставлении, вместо этого его хеш keccak256 используется для поиска значения. 
+По этой причине сопоставления не имеют длины или концепции «заданного» ключа или значения.
+Типы сопоставления объявлены как HashMap [_KeyType, _ValueType].
+_KeyType может быть любым базовым или байтовым типом. 
+Сопоставления, интерфейсы или структуры не поддерживаются в качестве ключевых типов.
+_ValueType на самом деле может быть любого типа, включая сопоставления.
+
+Note
+Mappings are only allowed as state variables.
+Примечание
+Сопоставления разрешены только как переменные состояния.
+        code:
+	# Defining a mapping
+	# Accessing a value
+	exampleMapping[0] = 10.1
+
+Note
+Mappings have no concept of length and so cannot be iterated over.
+Примечание
+Сопоставления не имеют понятия длины и поэтому не могут итерироваться.
+
+Initial Values
+Unlike most programming languages, Vyper does not have a concept of null. Instead, every variable type has 
+a default value. To check if a variable is empty, you must compare it to the default value for it’s given type.
+To reset a variable to it’s default value, assign to it the built-in empty() function which constructs 
+a zero value for that type.
+Начальные значения
+В отличие от большинства языков программирования, Vyper не имеет понятия null. Вместо этого каждый тип переменной 
+имеет значение по умолчанию. Чтобы проверить, пуста ли переменная, вы должны сравнить ее со значением 
+по умолчанию для данного типа.Чтобы сбросить переменную до значения по умолчанию, присвойте ей встроенную функцию 
+empty (), которая создает нулевое значение для этого типа.
+
+Note
+Memory variables must be assigned a value at the time they are declared.
+Переменным памяти должно быть присвоено значение во время их объявления.
+
+Here you can find a list of all types and default values:
+┌─────────────────────┬────────────────────────────────────────────────────────────────────────────────────────┐
+│ Type                │ Default Value                                                                          │
+└─────────────────────┴────────────────────────────────────────────────────────────────────────────────────────┘
+  address               0x0000000000000000000000000000000000000000
+  bool                  False
+  bytes32               0x0000000000000000000000000000000000000000000000000000000000000000
+  decimal               0.0
+  int128                1
+  uint256               1
+
+Note
+In Bytes the array starts with the bytes all set to '\x00'
+В Bytes массив начинается со всех байтов, установленных в '\x00'
+Note
+In reference types all the type’s members are set to their initial values.
+В ссылочных типах все члены типа устанавливаются в свои начальные значения.
+
+	Type Conversions
+All type conversions in Vyper must be made explicitly using the built-in convert(a: atype, btype) function. 
+Currently, the following type conversions are supported:
+	Преобразования типов
+Все преобразования типов в Vyper должны выполняться явно с использованием 
+встроенной функции convert (a: atype, btype). В настоящее время поддерживаются следующие преобразования типов:
+
+┌───────────────┬────────────────┬─────────────────────────────────────┬────────────────────────────────────┐
+│ In (atype)    │ Out (btype)    │ Допустимые значения                 │ Additional Notes Доп замечания     │
+└───────────────┴────────────────┴─────────────────────────────────────┴────────────────────────────────────┘
+ bool            decimal          All                                    0.0 or 1.0
+ bool            int128           All                                    0 or 1
+ bool            uint256          All                                    0 or 1
+ bool            bytes32          All                                    0x00 or 0x01
+ bool            Bytes            All
+ decimal         bool             All                                    Returns a != 0.0
+ decimal         int128           All                                    Значение усекается
+ decimal         uint256          a >= 0.0                               Значение усекается
+ decimal         bytes32          All
+ decimal         Bytes            All
+ int128          bool             All                                    Returns a != 0
+ int128          decimal          All
+ int128          uint256          a >= 0                                 Невозможно преобразовать отрицательные значения
+ int128          bytes32          All
+ int128          Bytes            All
+ uint256         bool             All
+ uint256         decimal          a <= MAX_DECIMAL                       Returns a != 0
+ uint256         int128           a <= MAX_INT128
+ uint256         bytes32          All
+ uint256         Bytes            All
+ bytes32         bool             All                                    True if a is not empty True, если a не пусто
+ bytes32         decimal          All
+ bytes32         int128           All
+ bytes32         uint256          All
+ bytes32         Bytes            All
+
+!!! Next file: vyperEnvVars_andConstants !!!

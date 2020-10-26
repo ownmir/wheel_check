@@ -1,0 +1,16 @@
+﻿!!! Prev file: vyperEnvVars_andConstants !!!
+
+	STATEMENTS
+Vyper’s statements are syntactically similar to Python, with some notable exceptions.
+Control Flow
+break
+The break statement terminates the nearest enclosing for loop.
+
+Операторы (Инструкции, предложения)
+Операторы Vyper синтаксически похожи на Python, за некоторыми заметными исключениями.
+Поток управления
+Оператор break завершает ближайший включающий цикл for.
+	code:
+
+
+!!! Next file: vyper

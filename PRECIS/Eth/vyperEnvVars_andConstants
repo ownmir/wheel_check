@@ -1,0 +1,101 @@
+﻿!!! Prev file: vyperTypes !!!
+	Environment Variables and Constants
+	
+	Environment Variables
+Environment variables always exist in the namespace and are primarily used to provide information 
+about the blockchain or current transaction.
+Переменные среды всегда существуют в пространстве имен и в основном используются для предоставления информации 
+о цепочке блоков или текущей транзакции.
+
+        Свойства блока и транзакции 
+╔═══════════════╤═══════╤═══════════════════════════════════════════╤════════════════════════════════════════════╗
+║ Name          │Type   │Value                                      │Значение                                    ║
+╟───────────────┴───────┴───────────────────────────────────────────┴────────────────────────────────────────────╢
+║block.coinbase   address Current block miner’s address               Текущий адрес майнера блока                ║
+║block.difficulty uint256 Current block difficulty                    Текущая сложность блока                    ║
+║block.number     uint256 Current block number                        Текущий номер блока                        ║
+║block.prevhash   bytes32 Equivalent to blockhash(block.number - 1)                                              ║
+║block.timestamp  uint256 Current block epoch timestamp               Метка времени текущей блочной эпохи        ║
+║chain.id         uint256 Chain ID                                                                               ║
+║msg.gas          uint256 Remaining gas                               Оставшийся gas                             ║
+║msg.sender       address Sender of the message (current call)        Отправитель сообщения (текущий вызов)      ║
+║msg.value        uint256 Number of wei sent with the message         Количество вэй, отправленных с сообщением  ║
+║tx.origin        address Sender of the transaction (full call chain) Отправитель транзакции (полная цепочка вызовов)
+╚═════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+Note
+msg.sender and msg.value can only be accessed from external functions. 
+If you require these values within a private function they must be passed as parameters.
+Доступ к msg.sender и msg.value возможен только из внешних функций. 
+Если вам требуются эти значения в частной функции, они должны быть переданы как параметры.
+
+	The self Variable
+self is an environment variable used to reference a contract from within itself. 
+Along with the normal address members, self allows you to read and write to state variables and 
+to call private functions within the contract.
+self - это переменная среды, используемая для ссылки на контракт изнутри. 
+Наряду с обычными членами адреса, self позволяет вам читать и записывать переменные состояния и 
+вызывать частные функции в контракте.
+╔═════════════╤═════════╤══════════════════════════════════════════════════════════════════════╗
+║Name         │ Type    │ Value                      │Значение                                 ║
+╟─────────────┼─────────┼──────────────────────────────────────────────────────────────────────╢
+║self         │ address │ Current contract’s address │ Адрес текущего контракта                ║
+║self.balance │ uint256 │ Current contract’s balance │ Баланс текущего контракта               ║
+╚═════════════╧═════════╧══════════════════════════════════════════════════════════════════════╝
+
+	code:
+state_var: uint256
+
+@external
+def set_var(value: uint256) -> bool:
+    self.state_var = value
+    return True
+
+@external
+@view
+def get_var() -> uint256:
+    return self.state_var
+
+	Calling Internal Functions
+self is also used to call internal functions within a contract:
+Вызов внутренних функций
+self также используется для вызова внутренних функций в контракте:
+
+	code:
+@internal
+def _times_two(amount: uint256) -> uint256:
+    return amount * 2
+
+@external
+def calculate(amount: uint256) -> uint256:
+    return self._times_two(amount)
+
+	Built In Constants
+Vyper has a few convenience constants builtin.
+Встроенные константы
+Vyper имеет несколько удобных встроенных констант.
+╔═════════════╤═════════╤══════════════════════════════════════════════════════════════════════╗
+║Name         │ Type    │ Value                      Значение                                  ║
+╟─────────────┼─────────┼──────────────────────────────────────────────────────────────────────╢
+ ZERO_ADDRESS   address   0x0000000000000000000000000000000000000000
+ EMPTY_BYTES32  bytes32   0x0000000000000000000000000000000000000000000000000000000000000000
+ MAX_INT128     int128    2**127 - 1
+ MIN_INT128     int128    -2**127
+ MAX_DECIMAL    decimal   (2**127 - 1)
+ MIN_DECIMAL    decimal   (-2**127)
+ MAX_UINT256    uint256   2**256 - 1
+
+	Custom Constants
+Custom constants can be defined at a global level in Vyper. To define a constant make use of the constant keyword.
+Пользовательские константыПользовательские константы могут быть определены на глобальном уровне в Vyper. 
+Чтобы определить константу, используйте ключевое слово constant.
+
+	code:
+TOTAL_SUPPLY: constant(uint256) = 10000000
+total_supply: public(uint256)
+
+@external
+def __init__():
+    self.total_supply = TOTAL_SUPPLY
+
+!!! Next file: vyperStatements !!!
