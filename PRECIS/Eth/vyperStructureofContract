@@ -1,0 +1,115 @@
+﻿		Structure of a Contract
+Vyper contracts are contained within files. Each file contains exactly one contract.
+
+This section provides a quick overview of the types of data present within a contract, with links to other sections where you can obtain more details.
+
+	Version Pragma
+Vyper supports a version pragma to ensure that a contract is only compiled by the intended compiler version, or range of versions. Version strings use NPM style syntax.
+		Структура контракта
+Контракты Vyper содержатся в файлах. Каждый файл содержит ровно один контракт.
+
+В этом разделе представлен краткий обзор типов данных, представленных в контракте, со ссылками на другие разделы, 
+где вы можете получить более подробную информацию.
+
+	Версия Pragma
+Vyper поддерживает прагму версии, чтобы гарантировать, что контракт компилируется только предполагаемой версией 
+компилятора или диапазоном версий. Строки версии используют синтаксис стиля NPM.
+
+	code:
+        # @version ^0.2.0
+
+In the above example, the contract only compiles with Vyper versions 0.2.x.
+В приведенном выше примере контракт компилируется только с Vyper версии 0.2.x.
+
+	State Variables
+
+State variables are values which are permanently stored in contract storage. 
+They are declared outside of the body of any functions, and initially contain the default value for their type.
+Переменные состояния
+Переменные состояния - это значения, которые постоянно хранятся в хранилище контрактов. 
+Они объявляются вне тела любых функций и изначально содержат значение по умолчанию для своего типа.
+
+	code:
+	storedData: int128
+
+State variables are accessed via the self object.
+Доступ к переменным состояния осуществляется через объект self.
+
+	code:
+	self.storedData = 123
+
+See the documentation on Types or Scoping and Declarations for more information.
+
+	Functions
+Functions are executable units of code within a contract.
+
+	Функции
+Функции - это исполняемые единицы кода в контракте.
+
+        code:
+	@external
+	def bid():
+	    ...
+
+Функции могут вызываться внутренне или внешне в зависимости от их видимости. 
+Функции могут принимать входные аргументы и возвращать переменные для передачи значений между ними.
+
+Дополнительную информацию см. В документации по функциям.
+
+	Events
+Events provide an interface for the EVM’s logging facilities. 
+Events may be logged with specially indexed data structures that allow clients, including light clients, 
+to efficiently sear
+События обеспечивают интерфейс для средств ведения журнала EVM. 
+События могут регистрироваться со специально проиндексированными структурами данных, которые позволяют клиентам, 
+в том числе легким клиентам, осуществлять эффективный поиск.
+
+	code:
+	event Payment:
+    		amount: int128
+    		sender: indexed(address)
+
+	total_paid: int128
+
+	@external
+	@payable
+	def pay():
+    		self.total_paid += msg.value
+    		log Payment(msg.value, msg.sender)
+
+	INTERFACES
+An interface is a set of function definitions used to enable calls between smart contracts. 
+A contract interface defines all of that contract’s externally available functions. 
+By importing the interface, your contract now knows how to call these functions in other contracts.
+
+Interfaces can be added to contracts either through inline definition, or by importing them from a seperate file.
+Интерфейсы
+Интерфейс - это набор определений функций, используемых для включения вызовов между смарт-контрактами. 
+Интерфейс контракта определяет все доступные извне функции этого контракта. 
+Благодаря импорту интерфейса ваш контракт теперь знает, как вызывать эти функции в других контрактах.
+
+Интерфейсы могут быть добавлены к контрактам либо посредством встроенного определения, либо путем импорта их 
+из отдельного файла.
+
+	code:
+	interface FooBar:
+    		def calculate() -> uint256: view
+    		def test1(): nonpayable
+
+        from foo import FooBar
+
+Once defined, an interface can then be used to make external calls to a given address:
+После определения интерфейс можно использовать для внешних вызовов по заданному адресу:
+
+	code:
+	@external
+	def test(some_address: address):
+    		FooBar(some_address).calculate()
+
+	STRUCTS
+A struct is custom defined type that can allows you to group several variables together:
+Структура - это настраиваемый тип, который позволяет группировать несколько переменных вместе:
+	struct MyStruct:
+    		value1: int128
+    		value2: decimal
+See the Structs documentation for more information.
