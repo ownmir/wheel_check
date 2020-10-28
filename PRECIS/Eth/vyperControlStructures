@@ -1,0 +1,39 @@
+﻿!!! Prev file: vyperStatements !!!
+
+	CONTROL STRUCTURES
+Functions
+Functions are executable units of code within a contract. 
+Functions may only be declared within a contract’s module scope.
+	Структуры управления
+Функции
+Функции - это исполняемые единицы кода в контракте. Функции могут быть объявлены только в рамках модуля контракта.
+	code:
+@external
+def bid():
+    ...
+
+Functions may be called internally or externally depending on their visibility. 
+Functions may accept input arguments and return variables in order to pass values between them.
+Функции могут вызываться внутренне или внешне в зависимости от их видимости.
+Функции могут принимать входные аргументы и возвращать переменные для передачи значений между ними.
+
+	Visibility
+All functions must include exactly one visibility decorator.
+Видимость
+Все функции должны включать только один декоратор видимости.
+
+External Functions
+External functions (marked with the decorator) are a part of the contract interface and may only be called 
+via transactions or from other contracts.@external
+Внешние функции (отмеченные декоратором) являются частью интерфейса контракта и могут вызываться только
+через транзакции или из других контрактов. @ external
+	code:
+@external
+def add_seven(a: int128) -> int128:
+    return a + 7
+
+A Vyper contract cannot call directly between two external functions. If you must do this, you can use an interface.
+Контракт Vyper не может вызывать напрямую между двумя внешними функциями. Если вам необходимо это сделать, 
+вы можете использовать интерфейс.
+
+!!! Next file: vyper  !!!

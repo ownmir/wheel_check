@@ -11,6 +11,110 @@ The break statement terminates the nearest enclosing for loop.
 Поток управления
 Оператор break завершает ближайший включающий цикл for.
 	code:
+for i in [1, 2, 3, 4, 5]:
+    if i == a:
+        break
 
+In the above example, the for loop terminates if i == a.
+В приведенном выше примере цикл for завершается, если i == a.
 
-!!! Next file: vyper
+continue
+The continue statement begins the next cycle of the nearest enclosing for loop.
+Оператор continue начинает следующий цикл ближайшего включающего цикла for.
+	code:
+for i in [1, 2, 3, 4, 5]:
+    if i != a:
+        continue
+    ...
+In the above example, the for loop begins the next cycle immediately whenever i != a.
+В приведенном выше примере цикл for начинает следующий цикл немедленно, когда i! = A.
+
+pass
+pass is a null operation — when it is executed, nothing happens. 
+It is useful as a placeholder when a statement is required syntactically, but no code needs to be executed:
+pass - это нулевая операция - при ее выполнении ничего не происходит. 
+Это полезно в качестве заполнителя, когда оператор требуется синтаксически, но выполнять код не требуется:
+	code:
+# this function does nothing (yet!) эта функция ничего не делает (пока!)
+
+@external
+def foo():
+    pass
+
+return
+return leaves the current function call with the expression list (or None) as a return value.
+return оставляет текущий вызов функции со списком выражений (или None) в качестве возвращаемого значения.
+	code:
+return RETURN_VALUE
+
+An important distinction between Vyper and Python is that Vyper does not implicitly return None 
+at the end of a function if no return statement is given. All functions must end with a return statement, 
+or another terminating action such as raise.
+Важное различие между Vyper и Python заключается в том, что Vyper неявно не возвращает None 
+в конце функции, если не задан оператор return. Все функции должны заканчиваться оператором return 
+или другим завершающим действием, например, raise.
+
+It is not allowed to have additional, unreachable statements after a return statement.
+После оператора возврата не допускается наличие дополнительных недостижимых операторов.
+
+	EVENT LOGGING
+log
+The log statement is used to log an event:
+Оператор log используется для регистрации события:
+	code:
+log MyEvent(...)
+
+The event must have been previously declared
+See Event Logging for more information on events.
+Событие должно быть объявлено заранее
+См. «Регистрация событий» для получения дополнительной информации о событиях.
+
+	ASSERTIONS AND EXCEPTIONS
+Vyper uses state-reverting exceptions to handle errors. Exceptions trigger the REVERT opcode (0xFD) 
+with the provided reason given as the error message. When an exception is raised the code stops operation, 
+the contract’s state is reverted to the state before the transaction took place and the remaining gas 
+is returned to the transaction’s sender. When an exception happen in a sub-call, 
+it “bubbles up” (i.e., exceptions are rethrown) automatically.
+
+	Утверждения и исключения
+Vyper использует исключения с возвратом состояния для обработки ошибок. Исключения запускают код операции REVERT (0xFD) 
+с указанной причиной в виде сообщения об ошибке. Когда возникает исключение, код останавливает работу, 
+состояние контракта возвращается к состоянию до того, как транзакция произошла, а оставшийся газ 
+возвращается отправителю транзакции. Когда во вспомогательном вызове возникает исключение, 
+оно автоматически «всплывает» (т. Е. Исключения генерируются повторно).
+
+If the reason string is set to UNREACHABLE, an INVALID opcode (0xFE) is used instead of REVERT. 
+In this case, calls that revert do not receive a gas refund. 
+This is not a recommended practice for general usage, 
+but is available for interoperability with various tools that use the INVALID opcode to perform dynamic analysis.
+
+Если строка причины установлена в значение UNREACHABLE, вместо REVERT используется код операции INVALID (0xFE).
+В этом случае за возвратные вызовы деньги не возмещаются.
+Это не рекомендуется для общего использования,
+но доступен для взаимодействия с различными инструментами, которые используют код операции INVALID для 
+выполнения динамического анализа.
+
+raise
+The raise statement triggers an exception and reverts the current call.
+Оператор Raise вызывает исключение и отменяет текущий вызов.
+	code:
+raise "something went wrong"
+
+The error string is not required. Строка ошибки не требуется.
+
+assert
+The assert statement makes an assertion about a given condition. 
+If the condition evaluates falsely, the transaction is reverted.
+Утверждение оператора (инструкции, предложения) делает суждение о данном условии.
+Если условие оценивается неверно, транзакция отменяется.
+	code:
+assert x > 5, "value too low (значение слишком низкое)"
+
+The error string is not required. Строка ошибки не требуется.
+
+This method’s behavior is equivalent to: Поведение этого метода эквивалентно:
+	code:
+if not cond:
+    raise "reason"
+
+!!! Next file: vyperControlStructures !!!
