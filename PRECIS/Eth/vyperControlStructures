@@ -36,4 +36,36 @@ A Vyper contract cannot call directly between two external functions. If you mus
 Контракт Vyper не может вызывать напрямую между двумя внешними функциями. Если вам необходимо это сделать, 
 вы можете использовать интерфейс.
 
+	Internal Functions
+Internal functions (marked with the @internal decorator) are only accessible from other functions 
+within the same contract. They are called via the self object:
+Внутренние функцииВнутренние функции (отмеченные декоратором @internal) доступны только из других функций 
+в том же контракте. Они вызываются через объект self:
+	code:
+@internal
+def _times_two(amount: uint256) -> uint256:
+    return amount * 2
+
+@external
+def calculate(amount: uint256) -> uint256:
+    return self._times_two(amount)
+
+Internal functions do not have access to msg.sender or msg.value. 
+If you require these values within an internal function you must pass them as parameters.
+Внутренние функции не имеют доступа к msg.sender или msg.value.
+Если вам требуются эти значения во внутренней функции, вы должны передать их как параметры.
+
+You can optionally declare a function’s mutability by using a decorator. There are four mutability levels:
+Pure: does not read from the contract state or any environment variables.
+View: may read from the contract state, but does not alter it.
+Nonpayable: may read from and write to the contract state, but cannot receive Ether.
+Payable: may read from and write to the contract state, and can receive Ether.
+При желании вы можете объявить изменяемость функции с помощью декоратора. Есть четыре уровня изменчивости:
+-Чистый: не читает из состояния контракта или каких-либо переменных среды.
+-Просмотр: может читать из состояния контракта, но не изменяет его.
+-Неплатный: может читать и записывать в состояние контракта, но не может получать эфир.
+-К оплате: может читать и записывать в состояние контракта, а также может получать эфир.
+
+
+
 !!! Next file: vyper  !!!
