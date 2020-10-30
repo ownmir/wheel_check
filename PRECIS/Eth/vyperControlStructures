@@ -65,6 +65,175 @@ Payable: may read from and write to the contract state, and can receive Ether.
 -Просмотр: может читать из состояния контракта, но не изменяет его.
 -Неплатный: может читать и записывать в состояние контракта, но не может получать эфир.
 -К оплате: может читать и записывать в состояние контракта, а также может получать эфир.
+	code:
+@view
+@external
+def readonly():
+    # this function cannot write to state
+    ...
+
+@payable
+@external
+def send_me_money():
+    # this function can receive ether
+    ...
+
+Functions default to nonpayable when no mutability decorator is used.
+По умолчанию функции неоплатые, если не используется декоратор изменяемости.
+
+	Re-entrancy Locks
+The decorator places a lock on a function, and all functions with the same value. 
+An attempt by an external contract to call back into any of these functions causes 
+the transaction to revert.@nonreentrant(<key>)<key>
+Блокировки повторного входа
+Декоратор блокирует функцию и все функции с одинаковым значением.
+Попытка внешнего контракта выполнить обратный вызов любой из этих функций вызывает
+транзакция, которую нужно откатить. @ nonreentrant (<key>) <key>
+	code:
+@external
+@nonreentrant("lock")
+def make_a_call(_addr: address):
+    # this function is protected from re-entrancy
+    ...
+
+	The __default__ Function
+A contract can also have a default function, which is executed on a call to the contract 
+if no other functions match the given function identifier (or if none was supplied at all, 
+such as through someone sending it Eth). It is the same construct as fallback functions in Solidity.
+Функция __default__
+Контракт также может иметь функцию по умолчанию, которая выполняется при вызове контракта.
+если никакая другая функция не соответствует заданному идентификатору функции 
+(или если ни одна не была предоставлена вообще, например, через кого-то, отправившего его через Eth). 
+Это та же конструкция, что и резервные функции в Solidity.
+
+This function is always named . It must be annotated with . It cannot expect any input arguments 
+and cannot return any values.__default__@external
+Эта функция всегда имеет имя. Она должена быть аннотирована. Она не может ожидать никаких входных аргументов 
+и не может возвращать никаких значений. __default__@external
+
+If the function is annotated as , this function is executed whenever the contract is sent Ether (without data). 
+This is why the default function cannot accept arguments and return values - 
+it is a design decision of Ethereum to make no differentiation between sending ether to a contract or 
+a user address.@payable
+Если функция помечена как, эта функция выполняется всякий раз, когда контракт отправляется в эфир (без данных).
+Вот почему функция по умолчанию не может принимать аргументы и возвращать значения -
+это дизайнерское решение Ethereum, чтобы не делать различий между отправкой эфира в контракт или
+адрес пользователя. @ оплачиваемый
+	code:
+event Payment:
+    amount: int128
+    sender: indexed(address)
+
+@external
+@payable
+def __default__():
+    log Payment(msg.value, msg.sender)
+
+	CONSIDERATIONS
+Just as in Solidity, Vyper generates a default function if one isn’t found, in the form of a call. 
+Note that this still generates an exception and thus will not succeed in receiving funds.REVERT
+СООБРАЖЕНИЯ
+Как и в Solidity, Vyper генерирует функцию по умолчанию, если она не найдена, в виде вызова.
+Обратите внимание, что при этом по-прежнему создается исключение, и поэтому получить средства не удастся.
+
+Ethereum specifies that the operations will be rolled back if the contract runs out of gas in execution. 
+calls to the contract come with a free stipend of 2300 gas, which does not leave much room to 
+perform other operations except basic logging. 
+However, if the sender includes a higher gas amount through a instead of , 
+then more complex functionality can be run.sendcallsend
+Ethereum указывает, что операции будут отменены, если в контракте закончится газ в исполнении.
+вызовы по контракту идут с бесплатной стипендией в размере 2300 газа, что не оставляет много места для
+выполнения других операций, кроме базового ведения журнала.
+Однако, если отправитель указывает большее количество газа через вместо,
+тогда могут быть запущены более сложные функции. sendcallsend
+
+It is considered a best practice to ensure your payable default function is compatible with this stipend. 
+The following operations will consume more than 2300 gas:
+
+Writing to storage
+Creating a contract
+Calling an external function which consumes a large amount of gas
+Sending Ether
+Рекомендуется обеспечить совместимость оплачиваемой функции по умолчанию с этой стипендией. 
+На следующие операции будет израсходовано более 2300 единиц газа:
+
+Запись в хранилище
+Создание контракта
+Вызов внешней функции, потребляющей большое количество газа
+Отправка эфира
+
+Lastly, although the default function receives no arguments, it can still access the object, including:msg
+
+the address of who is interacting with the contract (msg.sender)
+the amount of ETH sent (msg.value)
+the gas provided ().msg.gas
+Наконец, хотя функция по умолчанию не получает аргументов, она все еще может получить доступ к объекту, включая: msg
+
+адрес того, кто взаимодействует с контрактом (msg.sender)
+количество отправленных ETH (msg.value)
+предоставленный газ () .msg.gas
+
+	The __init__ Function
+__init__ is a special initialization function that may only be called at the time of deploying a contract. 
+It can be used to set initial values for storage variables. 
+A common use case is to set an variable with the creator the contract:owner
+Функция __init__
+__init__ - это специальная функция инициализации, которая может быть вызвана только во время развертывания контракта.
+Его можно использовать для установки начальных значений для переменных хранения.
+Типичный вариант использования - установить переменную с создателем контракта:owner
+	code:
+owner: address
+
+def __init__():
+    self.owner = msg.sender
+
+You cannot call to other contract functions from the initialization function.
+Вы не можете вызывать другие контрактные функции из функции инициализации.
+
+	Decorators Reference
+All functions must include one visibility decorator ( or ). The remaining decorators are optional.@external@internal
+        Справочник декораторов
+Все функции должны включать один декоратор видимости (или). Остальные декораторы необязательны. @ External @ internal
+
+Decorator	Description
+@external	Function can only be called externally                         Функция может быть вызвана только извне                      
+@internal	Function can only be called within current contract            Функция может быть вызвана только в рамках текущего контракта
+@pure		Function does not read contract state or environment variables Функция не считывает состояние контракта или переменные среды
+@view		Function does not alter contract state                         Функция не изменяет состояние контракта                      
+@payable	Function is able to receive Ether                              Функция может получать эфир                                  
+@nonreentrant(<unique_key>)	Function cannot be called back into during an external call Функцию нельзя вызвать снова во время внешнего вызова
+
+	if statements
+The statement is a control flow construct used for conditional execution:if
+Оператор представляет собой конструкцию потока управления, используемую для условного выполнения: if
+	code:
+if CONDITION:
+    ...
+
+CONDITION is a boolean or boolean operation. The boolean is evaluated left-to-right, one expression at a time, 
+until the condition is found to be true or false. If true, the logic in the body of the statement is executed.if
+
+Note that unlike Python, Vyper does not allow implicit conversion from non-boolean types within 
+the condition of an statement. will fail to compile with a type mismatch.ifif 1: pass
+
+You can also include and statements, to add more conditional statements and a body that executes 
+when the conditionals are false:elifelse
+CONDITION - это логическая или логическая операция. 
+Логическое значение оценивается слева направо, по одному выражению за раз,
+пока условие не окажется истинным или ложным. Если true, выполняется логика в теле оператора.
+
+Обратите внимание, что в отличие от Python, Vyper не позволяет неявное преобразование из небулевых типов внутри
+условие выписки. не будет скомпилирован с несоответствием типа. if 1: pass
+
+Вы также можете включать операторы и, чтобы добавить дополнительные условные операторы и тело, которое выполняет
+когда условные выражения ложны: elif else
+	code:
+if CONDITION:
+    ...
+elif OTHER_CONDITION:
+    ...
+else:
+    ...
 
 
 
