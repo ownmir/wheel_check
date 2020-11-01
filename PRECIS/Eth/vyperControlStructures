@@ -235,6 +235,69 @@ elif OTHER_CONDITION:
 else:
     ...
 
+for loops
+The statement is a control flow construct used to iterate over a value:for
+Этот оператор представляет собой конструкцию потока управления, используемую для перебора значения:for
+	code:
+for i in <ITERABLE>:
+    ...
 
+The iterated value can be a static array, or generated from the builtin function.
+Повторяемое значение может быть статическим массивом или сгенерировано встроенной функцией. range
+
+Array Iteration
+You can use to iterate through the values of any array variable: for
+	code:
+foo: int128[3] = [4, 23, 42]
+for i in foo:
+    ...
+
+In the above, example, the loop executes three times with assigned the values of , , and then .i 4 23 42
+В приведенном выше примере цикл выполняется три раза с присвоенными значениями, а затем
+
+You can also iterate over a literal array, as long as a common type can be determined for each item in the array:
+Вы также можете перебирать буквальный массив, если для каждого элемента в массиве можно определить общий тип:
+	code:
+for i in [4, 23, 42]:
+    ...
+
+Some restrictions:
+
+You cannot iterate over a multi-dimensional array. must always be a base type.i
+You cannot modify a value in an array while it is being iterated, 
+or call to a function that might modify the array being iterated. 	 	
+Некоторые ограничения:
+
+Вы не можете перебирать многомерный массив. всегда должен быть базовым типом. i
+Вы не можете изменить значение в массиве во время итерации,
+или вызовать функции, которая может изменить повторяемый массив.
+
+Range Iteration
+Ranges are created using the function. The following examples are valid uses of : range
+Итерация диапазона
+Диапазоны создаются с помощью функции range. Следующие примеры являются допустимыми вариантами использования range:
+	code:
+for i in range(STOP):
+    ...
+
+STOP is a literal integer greater than zero. i begins as zero and increments by one until it is equal to stop
+STOP - буквальное целое число больше нуля. i начинается с нуля и увеличивается на единицу, пока не станет равным stop
+	code:
+for i in range(start, stop):
+    ...
+
+START and STOP are literal integers, with being a greater value than . begins as and increments by one 
+until it is equal to .
+STOP START i START STOP
+START и STOP - буквальные целые числа, значение которых больше, чем. i начинается как START и увеличивается на единицу, 
+пока не станет равным STOP.
+	code:
+for i in range(a, a + N):
+    ...
+
+a is a variable with an integer type and i is a literal integer greater than zero. i begins as a and increments by one 
+until it is equal to a + N.
+a - это переменная целочисленного типа, а i - буквальное целое число больше нуля. i начинается как a и увеличивается на единицу
+пока он не станет равным a + N.
 
 !!! Next file: vyper  !!!
