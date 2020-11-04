@@ -19,12 +19,13 @@ def read_for_learn(s_row):
         # l += 1
         if len(tm) > 3:
             print(tm)
-    with open("C:\\Users\\ownmi\\Documents\\PRECIS\\Eth\\sentence.html", "w", encoding="utf-8") as f:
+    with open("D:\\Work\\sentence.html", "w", encoding="utf-8") as f:
         f.write(create_tag("html", addend="\n"))
         f.write(create_tag("head", addbegin="\t", addend="\n"))
+        f.write(create_tag("meta charset=&#34;utf-8&#34;", addbegin="\t\t", addend="\n"))
         f.write(create_tag("title", addbegin="\t\t", addend="Split sentence"))
         f.write(create_end_tag("title", addbegin="\t\t", addend="\n"))
-        f.write(create_end_tag("head", addbegin="\t", addend="\n"))
+        f.write(create_end_tag("head", addbegin="\t", addend="\n"))  # <meta charset="utf-8">
         f.write(create_tag("body", addbegin="\t", addend="\n"))
         # l = len(t)
         if l < 6:
@@ -49,7 +50,7 @@ def read_for_learn(s_row):
                     f.write(create_end_tag("P", addbegin="\t\t", addend="\n"))
         f.write(create_tag("H5", addbegin="\t\t", addend="\n"))
         for tm in by_words:
-            f.write("\t\t\t{},".format(tm))
+            f.write("\t{},".format(tm))
         f.write(create_end_tag("H5", addbegin="\t\t", addend="\n"))    
         f.write(create_end_tag("body", addbegin="\t", addend="\n"))
         f.write(create_end_tag("html", addend="\n"))

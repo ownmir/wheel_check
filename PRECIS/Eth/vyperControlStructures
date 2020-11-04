@@ -300,4 +300,4 @@ until it is equal to a + N.
 a - это переменная целочисленного типа, а i - буквальное целое число больше нуля. i начинается как a и увеличивается на единицу
 пока он не станет равным a + N.
 
-!!! Next file: vyper  !!!
+!!! Next file: vyperScopingDeclarations  !!!

@@ -1,0 +1,172 @@
+﻿!!! Prev file: vyperScopingDeclarations !!!
+
+	BUILT IN FUNCTIONS
+Vyper provides a collection of built in functions available in the global namespace of all contracts.
+Встроенные функцииVyper предоставляет набор встроенных функций, доступных в глобальном пространстве имен всех контрактов.
+
+	Bitwise Operations
+Побитовые операции
+
+bitwise_and(x: uint256, y: uint256) → uint256
+
+Perform a “bitwise and” operation. Each bit of the output is 1 if the corresponding bit of x AND of y is 1, otherwise it’s 0.
+Выполняет операцию «побитовое и». Каждый бит вывода равен 1, если соответствующий бит x И для y равен 1, в противном случае это 0.
+	code:
+@external
+@view
+def foo(x: uint256, y: uint256) -> uint256:
+    return bitwise_and(x, y)
+
+	code:
+>>> ExampleContract.foo(31337, 8008135)
+12353
+
+bitwise_not(x: uint256) → uint256
+
+Return the complement of x - the number you get by switching each 1 for a 0 and each 0 for a 1.
+Возвращает дополнение x - число, которое вы получите, заменив каждую 1 на 0 и каждый 0 на 1.
+	code:
+@external
+@view
+def foo(x: uint256) -> uint256:
+    return bitwise_not(x)
+
+	code:
+    return bitwise_not(x)
+>>> ExampleContract.foo(0)
+115792089237316195423570985008687907853269984665640564039457584007913129639935
+
+bitwise_or(x: uint256, y: uint256) → uint256
+	code:
+@external
+@view
+def foo(x: uint256, y: uint256) -> uint256:
+    return bitwise_or(x, y)
+
+bitwise_xor(x: uint256, y: uint256) → uint256
+
+	code:
+@external
+@view
+def foo(x: uint256, y: uint256) -> uint256:
+    return bitwise_xor(x, y)
+
+shift(x: uint256, _shift: int128) → uint256
+Return x with the bits shifted _shift places. A positive _shift value equals a left shift, a negative value is a right shift.
+Вернуть x со сдвинутыми битами на _shift. Положительное значение _shift соответствует сдвигу влево, 
+отрицательное значение - сдвигу вправо.
+	code:
+@external
+@view
+def foo(x: uint256, y: int128) -> uint256:
+    return shift(x, y)
+>>> ExampleContract.foo(2, 8)
+512
+
+	Chain Interaction
+Взаимодействие в блокчейне
+
+create_forwarder_to(target: address, value: uint256 = 0) → address
+
+Deploys a small contract that duplicates the logic of the contract at target, 
+but has it’s own state since every call to target is made using DELEGATECALL to target. 
+To the end user, this should be indistinguishable from an independantly deployed contract with the same code as target.
+
+Развертывает небольшой контракт, который дублирует логику контракта на target,
+но имеет собственное состояние, поскольку каждый вызов target выполняется с помощью DELEGATECALL для target.
+Для конечного пользователя это должно быть неотличимо от независимо развернутого контракта с тем же кодом, что и target.
+
+	NOTE     ========================================================================
+It is very important that the deployed contract at target is code you know and trust, 
+and does not implement the selfdestruct opcode as this will affect the operation of the forwarder contract.
+-target: Address of the contract to duplicate
+-value: The wei value to send to the new contract address (Optional, default 0)
+Returns the address of the duplicated contract.
+
+Очень важно, чтобы развернутый контракт target был кодом, который вы знаете и которому доверяете.
+и не реализует код операции самоуничтожения (selfdestruct), так как это повлияет на работу контракта пересылки.
+-target: адрес дублируемого контракта
+-value: значение wei для отправки на новый адрес контракта (необязательно, по умолчанию 0)
+Возвращает адрес дублированного контракта.
+
+	code:
+@external
+def foo(_target: address) -> address:
+    return create_forwarder_to(_target)
+	End NOTE ========================================================================
+
+raw_call(to: address, data: Bytes, max_outsize: int = 0, gas: uint256 = gasLeft, value: uint256 = 0, 
+is_delegate_call: bool = False, is_static_call: bool = False) → Bytes[max_outsize]
+
+Call to the specified Ethereum address.
+Вызов на указанный адрес Ethereum.
+
+-to: Destination address to call to
+-data: Data to send to the destination address
+-max_outsize: Maximum length of the bytes array returned from the call. 
+If the returned call data exceeds this length, only this number of bytes is returned.
+-gas: The amount of gas to attach to the call. If not set, all remainaing gas is forwarded.
+-value: The wei value to send to the address (Optional, default 0)
+-is_delegate_call: If True, the call will be sent as DELEGATECALL (Optional, default False)
+-is_static_call: If True, the call will be sent as STATICCALL (Optional, default False)
+
+-to: адрес назначения для вызова
+-data: данные для отправки по адресу назначения
+-max_outsize: максимальная длина массива байтов, возвращаемого вызовом.
+Если возвращаемые данные вызова превышают эту длину, возвращается только это количество байтов.
+-gas: количество газа, которое нужно подключить к вызову. Если не установлен, весь оставшийся газ пересылается.
+-value: значение wei для отправки по адресу (необязательно, по умолчанию 0)
+-is_delegate_call: если True, вызов будет отправлен как DELEGATECALL (необязательно, по умолчанию False)
+-is_static_call: если True, вызов будет отправлен как STATICCALL (необязательно, по умолчанию False)
+
+Returns the data returned by the call as a Bytes list, with max_outsize as the max length.
+Возвращает данные, возвращаемые вызовом, в виде списка Bytes с max_outsize в качестве максимальной длины.
+
+Returns None if max_outsize is omitted or set to 0.
+Возвращает None, если max_outsize опущен или установлен в 0.
+
+	Note:
+The actual size of the returned data may be less than max_outsize. You can use len to obtain the actual size.
+Returns the address of the duplicated contract.
+Фактический размер возвращаемых данных может быть меньше max_outsize. 
+Вы можете использовать len для получения действительного размера.
+Возвращает адрес дублированного контракта.
+	code:
+@external
+@payable
+def foo(_target: address) -> Bytes[32]:
+    response: Bytes[32] = raw_call(_target, 0xa9059cbb, max_outsize=32, value=msg.value)
+    return response
+
+raw_log(topics: bytes32[4], data: Union[Bytes, bytes32]) → None
+
+Provides low level access to the LOG opcodes, emitting a log without having to specify an ABI type.
+-topics: List of bytes32 log topics. The length of this array determines which opcode is used.
+-data: Unindexed event data to include in the log. May be given as Bytes or bytes32.
+
+Предоставляет низкоуровневый доступ к кодам операций LOG, создавая журнал без необходимости указывать тип ABI.
+-topics: Список тем журнала bytes32. Длина этого массива определяет, какой код операции используется.
+-data: неиндексированные данные о событиях для включения в журнал. Может быть дано как Bytes или bytes32.
+
+	code:
+@external
+def foo(_topic: bytes32, _data: Bytes[100]):
+    raw_log([_topic], _data)
+
+selfdestruct(to: address) → None
+
+Trigger the SELFDESTRUCT opcode (0xFF), causing the contract to be destroyed.
+to: Address to forward the contract’s ether balance to
+
+Триггер код операции SELFDESTRUCT (0xFF), в результате чего контракт будет уничтожен.
+to: Адрес для пересылки эфирного баланса контракта на
+
+	!Warning
+This method delete the contract from the blockchain. 
+All non-ether assets associated with this contract are “burned” and the contract is no longer accessible.
+
+!ПредупреждениеЭтот метод удаляет контракт из блокчейна.
+Все неэфирные активы, связанные с этим контрактом, «сжигаются», и контракт больше не доступен.
+
+
+!!! Next file:   !!!
