@@ -167,6 +167,150 @@ All non-ether assets associated with this contract are “burned” and the cont
 
 !ПредупреждениеЭтот метод удаляет контракт из блокчейна.
 Все неэфирные активы, связанные с этим контрактом, «сжигаются», и контракт больше не доступен.
+	code:
+@external
+def do_the_needful():
+    selfdestruct(msg.sender)
+
+send(to: address, value: uint256) → None
+
+Send ether from the contract to the specified Ethereum address.
+
+to: The destination address to send ether to
+value: The wei value to send to the address
+
+Отправляет эфир из контракта на указанный адрес Ethereum.
+
+-to: адрес назначения для отправки эфира.
+-value: значение wei для отправки по адресу
+
+Note
+The amount to send is always specified in wei.
+Сумма для отправки всегда указывается в wei.
+	code:
+@external
+def foo(_receiver: address, _amount: uint256):
+    send(_receiver, _amount)
+
+	CRYPTOGRAPHY
+Криптография
+
+ecadd(a: uint256[2], b: uint256[2]) → uint256[2]
+
+Take two points on the Alt-BN128 curve and add them together.
+
+Берет две точки на кривой Alt-BN128 и складывает их.
+
+	code:
+@external
+@view
+def foo(x: uint256[2], y: uint256[2]) -> uint256[2]:
+    return ecadd(x, y)
+
+	code:
+>>> ExampleContract.foo([1, 2], [1, 2])
+[
+    1368015179489954701390400359078579693043519447331113978918064868415326638035,
+    9918110051302171585080402603319702774565515993150576347155970296011118125764,
+]
+
+ecmul(point: uint256[2], scalar: uint256) → uint256[2]
+
+Take a point on the Alt-BN128 curve (p) and a scalar value (s), and return the result of adding the point 
+to itself s times, i.e. p * s.
+
+point: Point to be multiplied
+scalar: Scalar value
+
+Берет точку на кривой Alt-BN128 (p) и скалярное значение (s) и возвращает  результат добавления точки 
+к самой себе s раз, то есть p * s.
+
+point: Точка для умножения
+скаляр: Скалярное значение
+	code:
+@external
+@view
+def foo(point: uint256[2], scalar: uint256) -> uint256[2]:
+    return ecmul(point, scalar)
+
+result:
+>>> ExampleContract.foo([1, 2], 3)
+[
+    3353031288059533942658390886683067124040920775575537747144343083137631628272,
+    19321533766552368860946552437480515441416830039777911637913418824951667761761,
+]
+
+ecrecover(hash: bytes32, v: uint256, r: uint256, s: uint256) → address
+
+Recover the address associated with the public key from the given elliptic curve signature.
+Восстанавливает адрес, связанный с открытым ключом, из данной подписи эллиптической кривой.
+
+-r: first 32 bytes of signature
+-s: second 32 bytes of signature
+-v: final 1 byte of signature
+Returns the associated address, or 0 on error.
+
+-r: первые 32 байта подписи
+-s: вторые 32 байта подписи
+-v: последний байт подписи
+Возвращает связанный адрес или 0 в случае ошибки.
+
+keccak256(_value) → bytes32
+
+Return a keccak256 hash of the given value.
+
+_value: Value to hash. Can be a literal string, Bytes, or bytes32.
+
+Возвращает хеш keccak256 заданного значения.
+
+_value: значение хэша. Может быть буквальной строкой, Bytes или bytes32.
+	code:
+@external
+@view
+def foo(_value: Bytes[100]) -> bytes32
+    return keccak256(_value)
+
+>>> ExampleContract.foo(b"potato")
+0x9e159dfcfe557cc1ca6c716e87af98fdcb94cd8c832386d0429b2b7bec02754f
+
+sha256(_value) → bytes32
+
+Return a sha256 (SHA2 256bit output) hash of the given value.
+
+_value: Value to hash. Can be a literal string, Bytes, or bytes32.
+Возвращает хэш sha256 (выход SHA2 256 бит) заданного значения.
+
+_value: значение хэша. Может быть буквальной строкой, Bytes или bytes32.
+	code:
+@external
+@view
+def foo(_value: Bytes[100]) -> bytes32
+    return sha256(_value)
+
+>>> ExampleContract.foo(b"potato")
+0xe91c254ad58860a02c788dfb5c1a65d6a8846ab1dc649631c7db16fef4af2dec
+
+	Data Manipulation
+Манипуляция данными
+
+concat(a, b, *args) → Union[Bytes, String]
+
+Take 2 or more bytes arrays of type bytes32, Bytes or String and combine them into a single value.
+
+If the input arguments are String the return type is String. Otherwise the return type is Bytes.
+
+Берет 2 или более байтовых массивов типа bytes32, Bytes или String и объединяет их в одно значение.
+
+Если входные аргументы - String, возвращаемый тип - String. В противном случае возвращаемый тип - Bytes.
+	code:
+@external
+@view
+def foo(a: String[5], b: String[5], c: String[5]) -> String[100]
+    return concat(a, " ", b, " ", c, "!")
+
+>>> ExampleContract.foo("why","hello","there")
+"why hello there!"
+
 
 
 !!! Next file:   !!!
