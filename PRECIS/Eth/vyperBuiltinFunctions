@@ -405,6 +405,176 @@ value: Decimal value to round down
 Округляет десятичную дробь до ближайшего целого числа.
 
 value: десятичное значение для округления в меньшую сторону
+	code:
+@external
+@view
+def foo(value: decimal) -> uint256:
+    return floor(value)
+>>> ExampleContract.foo(3.1337)
+3
 
+max(a: numeric, b: numeric) → numeric
+Return the creater value of a and b. The input values may be any numeric type as long as they are both of the same type. The output value is the same as the input values.
+@external
+@view
+def foo(a: uint256, b: uint256) -> uint256:
+    return max(a, b)
+>>> ExampleContract.foo(23, 42)
+42
+min(a: numeric, b: numeric) → numeric
+Returns the lesser value of a and b. The input values may be any numeric type as long as they are both of the same type. The output value is the same as the input values.
+@external
+@view
+def foo(a: uint256, b: uint256) -> uint256:
+    return min(a, b)
+>>> ExampleContract.foo(23, 42)
+23
 
-!!! Next file:   !!!
+pow_mod256(a: uint256, b: uint256) → uint256
+
+Return the result of a ** b % (2 ** 256).
+This method is used to perform exponentiation without overflow checks.
+Возвращает результат a ** b% (2 ** 256).
+Этот метод используется для возведения в степень без проверки переполнения.
+	code:
+@external
+@view
+def foo(a: uint256, b: uint256) -> uint256:
+    return pow_mod256(a, b)
+>>> ExampleContract.foo(2, 3)
+8
+>>> ExampleContract.foo(100, 100)
+59041770658110225754900818312084884949620587934026984283048776718299468660736
+
+sqrt(d: decimal) → decimal
+
+Return the square root of the provided decimal number, using the Babylonian square root algorithm.
+Возвращает квадратный корень из предоставленного десятичного числа, используя вавилонский алгоритм квадратного корня.
+	code:
+@external
+@view
+def foo(d: decimal) -> decimal:
+    return sqrt(d)
+>>> ExampleContract.foo(9.0)
+3.0
+
+uint256_addmod(a: uint256, b: uint256, c: uint256) → uint256
+
+Return the modulo of (a + b) % c. Reverts if c == 0.
+Возвращает по модулю (a + b)% c. Отменяет, если c == 0.
+
+@external
+@view
+def foo(a: uint256, b: uint256, c: uint256) -> uint256:
+    return uint256_addmod(a, b, c)
+>>> (6 + 13) % 8
+3
+>>> ExampleContract.foo(6, 13, 8)
+3
+
+uint256_mulmod(a: uint256, b: uint256, c: uint256) → uint256
+
+Return the modulo from (a * b) % c. Reverts if c == 0.
+Возвращает модуль из (a * b)% c. Отменяет, если c == 0.
+
+@external
+@view
+def foo(a: uint256, b: uint256, c: uint256) -> uint256:
+    return uint256_mulmod(a, b, c)
+>>> (11 * 2) % 5
+2
+>>> ExampleContract.foo(11, 2, 5)
+2
+
+	Utilities
+Утилиты
+
+as_wei_value(_value, unit: str) → uint256
+
+Take an amount of ether currency specified by a number and a unit and return the integer quantity of wei equivalent to that amount.
+-_value: Value for the ether unit. Any numeric type may be used, however the value cannot be negative.
+-unit: Ether unit name (e.g. "wei", "ether", "gwei", etc.) indicating the denomination of _value. 
+Must be given as a literal string.
+
+Берет количество эфирной валюты, указанное числом и единицей, и возвращает целое количество wei, эквивалентное этой сумме.
+-_value: значение единицы эфира. Можно использовать любой числовой тип, однако значение не может быть отрицательным.
+-unit: название единицы эфира (например, «wei», «ether», «gwei» и т. д.), указывающее номинал _value. 
+Должена быть дана как буквальная строка.
+
+@external
+@view
+def foo(s: String[32]) -> uint256:
+    return as_wei_value(1.337, "ether")
+
+>>> ExampleContract.foo(1)
+1337000000000000000
+
+blockhash(block_num: uint256) → bytes32
+
+Return the hash of the block at the specified height.
+Возвращает хеш блока на указанной высоте (порядковый номер блока).
+
+Note
+The EVM only provides access to the most 256 blocks. This function returns EMPTY_BYTES32 
+if the block number is greater than or equal to the current block number or more than 256 blocks behind the current block.
+
+Заметка EVM обеспечивает доступ самое большее к 256 блокам. Эта функция возвращает EMPTY_BYTES32
+если номер блока больше или равен текущему номеру блока или более 256 блоков позади текущего блока.
+
+@external
+@view
+def foo() -> bytes32:
+    return blockhash(block.number - 16)
+
+>>> ExampleContract.foo()
+0xf3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+empty(typename) → Any
+
+Return a value which is the default (zeroed) value of its type. 
+Useful for initializing new memory variables.
+-typename: Name of the type
+
+Возвращает значение, которое является значением по умолчанию (обнуленным) для своего типа. 
+Полезно для инициализации новых переменных памяти.
+-typename: имя типа
+
+@external
+@view
+def foo():
+    x: uint256[2][5] = empty(uint256[2][5])
+
+len(b: Union[Bytes, String]) → uint256
+
+Return the length of a given Bytes or String.
+Возвращает длину заданного значения Bytes или String.
+
+@external
+@view
+def foo(s: String[32]) -> uint256:
+    return len(s)
+>>> ExampleContract.foo("hello")
+5
+
+method_id(method, output_type: type = Bytes[4]) → Union[bytes32, Bytes[4]]
+
+Takes a function declaration and returns its method_id (used in data field to call it).
+
+-method: Method declaration as given as a literal string
+-output_type: The type of output (Bytes[4] or bytes32). Defaults to Bytes[4].
+
+Returns a value of the type specified by output_type.
+
+Принимает объявление функции и возвращает ее method_id (используется в поле данных для ее вызова).
+-method: объявление метода в виде буквальной строки
+-output_type: тип вывода (Bytes[4] или bytes32). По умолчанию Bytes[4].
+Возвращает значение типа, указанного в output_type.
+
+@external
+@view
+def foo() -> Bytes[4]:
+    return method_id('transfer(address,uint256)', output_type=Bytes[4])
+>>> ExampleContract.foo()
+b"\xa9\x05\x9c\xbb"
+
+!!! Next file: vyperInterfaces  !!!
