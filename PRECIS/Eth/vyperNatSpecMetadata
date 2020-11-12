@@ -1,0 +1,27 @@
+﻿!!! Prev file: vyperEventLogging  !!!
+
+	NatSpec Metadata	Метаданные NatSpec (Natural Language Specification) (Natural Specification)
+
+Vyper contracts can use a special form of docstring to provide rich documentation for functions, 
+return variables and more. 
+This special form is named the Ethereum Natural Language Specification Format (NatSpec).
+
+Контракты Vyper могут использовать специальную форму строки документации для предоставления подробной документации для функций, 
+возвращаемых переменных и многого другого. 
+Эта специальная форма называется форматом спецификации естественного языка Ethereum (NatSpec).
+
+This documentation is segmented into developer-focused messages and end-user-facing messages. 
+These messages may be shown to the end user (the human) at the time that they will interact with the contract 
+(i.e. sign a transaction).
+
+Эта документация разделена на сообщения, ориентированные на разработчиков, и сообщения, предназначенные для конечных пользователей. 
+Эти сообщения могут быть показаны конечному пользователю (человеку) в то время, когда он будет взаимодействовать с контрактом 
+(т.е. подписывать транзакцию).
+
+	Example		Пример
+Vyper supports structured documentation for contracts and external functions using the doxygen notation format.
+Vyper поддерживает структурированную документацию для контрактов и внешних функций с использованием формата нотации doxygen.
+
+
+
+!!!	!!!

@@ -102,6 +102,36 @@ It is also possible to create an event with no arguments. In this case, use the 
 
 event Foo: pass
 
+Logging Events
+Once an event is declared, you can log (send) events. 
+You can send events as many times as you want to. 
+Please note that events sent do not take state storage and thus do not cost gas: 
+this makes events a good way to save some information. 
+However, the drawback is that events are not available to contracts, only to clients.
+Logging events is done using the log statement: log Transfer(msg.sender, _to, _amount)
 
+Регистрация событийПосле объявления события вы можете регистрировать (отправлять) события. 
+Вы можете отправлять события столько раз, сколько захотите. 
+Обратите внимание, что отправленные события не хранятся в хранилище состояний и, следовательно, не требуют затрат газа: 
+это делает события хорошим способом сохранения некоторой информации. 
+Однако недостатком является то, что события доступны не для контрактов, а только для клиентов.
+Регистрация событий выполняется с помощью оператора журнала:
+
+log Transfer(msg.sender, _to, _amount)
+
+The order and types of arguments given must match the order of arguments used when declaring the event..
+Порядок и типы данных аргументов должны соответствовать порядку аргументов, используемых при объявлении события.
+
+
+	Listening for Events Прослушивание событий
+In the example listener above, the result arg actually passes a large amount of information. 
+Here we’re most interested in result.returnValues. This is an object with properties that match the properties 
+declared in the event. Note that this object does not contain the indexed properties, 
+which can only be searched in the original myToken.Transfer that created the callback.
+
+В приведенном выше примере прослушивателя, результат arg фактически передает большой объем информации. 
+Здесь нас больше всего интересует result.returnValues. Это объект, свойства которого соответствуют свойствам, 
+объявленным в событии. Обратите внимание, что этот объект не содержит индексированных свойств, 
+поиск по которым возможен только в исходном myToken.Transfer, создавшем обратный вызов.
 
 !!! Next file: vyperNatSpecMetadata  !!!
