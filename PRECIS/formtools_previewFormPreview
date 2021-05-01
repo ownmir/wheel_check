@@ -1,0 +1,181 @@
+﻿Атрибут or метод __call__    type - <class 'method'>
+__doc__ - None
+Атрибут or метод __class__    type - <class 'type'>
+__doc__ - None
+Атрибут or метод __delattr__    type - <class 'method-wrapper'>
+Implement delattr(self, name). -> Реализуйте delattr (self, name).
+Атрибут or метод __dict__    type - <class 'dict'>
+dict() -> new empty dictionary -> dict () -> новый пустой словарь
+dict(mapping) -> new dictionary initialized from a mapping object's -> dict (отображение) -> новый словарь, инициализированный из объекта отображения
+    (key, value) pairs -> (ключ, значение) пары
+dict(iterable) -> new dictionary initialized as if via: -> dict (iterable) -> новый словарь инициализирован, как если бы через:
+    d = {} -> d = {}
+    for k, v in iterable: -> для k, v в итерации:
+        d[k] = v -> d [k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs -> dict (** kwargs) -> новый словарь, инициализированный парами имя = значение
+    in the keyword argument list.  For example:  dict(one=1, two=2) -> в списке аргументов ключевого слова. Например: dict (один = 1, два = 2)
+Атрибут or метод __dir__    type - <class 'builtin_function_or_method'>
+Default dir() implementation. -> Реализация по умолчанию dir ().
+Атрибут or метод __doc__    type - <class 'NoneType'>
+__doc__ - None
+Атрибут or метод __eq__    type - <class 'method-wrapper'>
+Return self==value. -> Вернуть self == значение.
+Атрибут or метод __format__    type - <class 'builtin_function_or_method'>
+Default object formatter. -> Средство форматирования объекта по умолчанию.
+Атрибут or метод __ge__    type - <class 'method-wrapper'>
+Return self>=value. -> Вернуть self> = value.
+Атрибут or метод __getattribute__    type - <class 'method-wrapper'>
+Return getattr(self, name). -> Вернуть getattr (self, name).
+Атрибут or метод __gt__    type - <class 'method-wrapper'>
+Return self>value. -> Вернуть self> значение.
+Атрибут or метод __hash__    type - <class 'method-wrapper'>
+Return hash(self). -> Вернуть хэш (себя).
+Атрибут or метод __init__    type - <class 'method'>
+__doc__ - None
+Атрибут or метод __init_subclass__    type - <class 'builtin_function_or_method'>
+This method is called when a class is subclassed. -> Этот метод вызывается при создании подкласса класса.
+ ->
+The default implementation does nothing. It may be -> Реализация по умолчанию ничего не делает. Это может быть
+overridden to extend subclasses. -> переопределено для расширения подклассов.
+ ->
+Атрибут or метод __le__    type - <class 'method-wrapper'>
+Return self<=value. -> Вернуть self <= value.
+Атрибут or метод __lt__    type - <class 'method-wrapper'>
+Return self<value. -> Вернуть self <значение.
+Атрибут or метод __module__    type - <class 'str'>
+str(object='') -> str -> стр (объект = '') -> стр.
+str(bytes_or_buffer[, encoding[, errors]]) -> str -> str (bytes_or_buffer [, кодировка [, ошибки]]) -> str
+ ->
+Create a new string object from the given object. If encoding or -> Создайте новый строковый объект из данного объекта. Если кодировка или
+errors is specified, then the object must expose a data buffer -> error, то объект должен предоставлять буфер данных
+that will be decoded using the given encoding and error handler. -> который будет декодирован с использованием заданной кодировки и обработчика ошибок.
+Otherwise, returns the result of object.__str__() (if defined) -> В противном случае возвращает результат объекта .__ str __ () (если определено)
+or repr(object). -> или repr (объект).
+encoding defaults to sys.getdefaultencoding(). -> кодировка по умолчанию sys.getdefaultencoding ().
+errors defaults to 'strict'. -> по умолчанию используется "строгий".
+Атрибут or метод __ne__    type - <class 'method-wrapper'>
+Return self!=value. -> Вернуть self! = Значение.
+Атрибут or метод __new__    type - <class 'builtin_function_or_method'>
+Create and return a new object.  See help(type) for accurate signature. -> Создайте и верните новый объект. См. Справку (тип) для точной подписи.
+Атрибут or метод __reduce__    type - <class 'builtin_function_or_method'>
+Helper for pickle. -> Помощник для рассола.
+Атрибут or метод __reduce_ex__    type - <class 'builtin_function_or_method'>
+Helper for pickle. -> Помощник для рассола.
+Атрибут or метод __repr__    type - <class 'method-wrapper'>
+Return repr(self). -> Вернуть repr (self).
+Атрибут or метод __setattr__    type - <class 'method-wrapper'>
+Implement setattr(self, name, value). -> Реализуйте setattr (self, name, value).
+Атрибут or метод __sizeof__    type - <class 'builtin_function_or_method'>
+Size of object in memory, in bytes. -> Размер объекта в памяти в байтах.
+Атрибут or метод __str__    type - <class 'method-wrapper'>
+Return str(self). -> Вернуть str (self).
+Атрибут or метод __subclasshook__    type - <class 'builtin_function_or_method'>
+Abstract classes can override this to customize issubclass(). -> Абстрактные классы могут переопределить это, чтобы настроить issubclass ().
+ ->
+This is invoked early on by abc.ABCMeta.__subclasscheck__(). -> Это вызывается на раннем этапе abc.ABCMeta .__ subclasscheck __ ().
+It should return True, False or NotImplemented.  If it returns -> Он должен возвращать True, False или NotImplemented. Если он вернется
+NotImplemented, the normal algorithm is used.  Otherwise, it -> NotImplemented, используется обычный алгоритм. В противном случае это
+overrides the normal algorithm (and the outcome is cached). -> переопределяет нормальный алгоритм (и результат кэшируется).
+ ->
+Атрибут or метод __weakref__    type - <class 'NoneType'>
+__doc__ - None
+Атрибут or метод _check_security_hash    type - <class 'method'>
+__doc__ - None
+Атрибут or метод done    type - <class 'method'>
+ ->
+        Does something with the ``cleaned_data`` data and then needs to -> Что-то делает с данными cleaned_data, а затем нужно
+        return an :class:`~django.http.HttpResponseRedirect`, e.g. to a -> вернуть: class: `~ django.http.HttpResponseRedirect`, например к
+        success page. -> страница успеха.
+Атрибут or метод failed_hash    type - <class 'method'>
+ ->
+        Returns an :class:`~django.http.HttpResponse` in the case of -> Возвращает: class: `~ django.http.HttpResponse` в случае
+        an invalid security hash. -> недопустимый хэш безопасности.
+Атрибут or метод form    type - <class 'django.forms.forms.DeclarativeFieldsMetaclass'>
+__doc__ - None
+Атрибут or метод form_template    type - <class 'str'>
+str(object='') -> str -> стр (объект = '') -> стр.
+str(bytes_or_buffer[, encoding[, errors]]) -> str -> str (bytes_or_buffer [, кодировка [, ошибки]]) -> str
+ ->
+Create a new string object from the given object. If encoding or -> Создайте новый строковый объект из данного объекта. Если кодировка или
+errors is specified, then the object must expose a data buffer -> error, то объект должен предоставлять буфер данных
+that will be decoded using the given encoding and error handler. -> который будет декодирован с использованием заданной кодировки и обработчика ошибок.
+Otherwise, returns the result of object.__str__() (if defined) -> В противном случае возвращает результат объекта .__ str __ () (если определено)
+or repr(object). -> или repr (объект).
+encoding defaults to sys.getdefaultencoding(). -> кодировка по умолчанию sys.getdefaultencoding ().
+errors defaults to 'strict'. -> по умолчанию используется "строгий".
+Атрибут or метод get_auto_id    type - <class 'method'>
+ ->
+        Hook to override the ``auto_id`` kwarg for the form. Needed when -> Хук для переопределения kwarg `` auto_id '' для формы. Необходимо когда
+        rendering two form previews in the same template. -> рендеринг двух превью форм в одном шаблоне.
+Атрибут or метод get_context    type - <class 'method'>
+Context for template rendering. -> Контекст для рендеринга шаблона.
+Атрибут or метод get_initial    type - <class 'method'>
+ ->
+        Takes a request argument and returns a dictionary to pass to the form's -> Принимает аргумент запроса и возвращает словарь для передачи в форму
+        ``initial`` kwarg when the form is being created from an HTTP get. -> `` initial`` kwarg, когда форма создается из HTTP-запроса.
+Атрибут or метод parse_params    type - <class 'method'>
+ ->
+        Given captured args and kwargs from the URLconf, saves something in -> Учитывая захваченные аргументы и kwargs из URLconf, что-то сохраняет в
+        self.state and/or raises :class:`~django.http.Http404` if necessary. -> self.state и / или при необходимости поднимает: class: `~ django.http.Http404`.
+ ->
+        For example, this URLconf captures a user_id variable:: -> Например, этот URLconf захватывает переменную user_id ::
+ ->
+            path('contact/<int:user_id>/', MyFormPreview(MyForm)), -> путь ('контакт / <int: user_id> /', MyFormPreview (MyForm)),
+ ->
+        In this case, the kwargs variable in parse_params would be -> В этом случае переменная kwargs в parse_params будет иметь вид
+        ``{'user_id': 32}`` for a request to ``'/contact/32/'``. You can use -> `` {'user_id': 32} 'для запроса к' '/ contact / 32 /' ''. Ты можешь использовать
+        that ``user_id`` to make sure it's a valid user and/or save it for -> этот `` user_id '', чтобы убедиться, что это действительный пользователь, и / или сохранить его для
+        later, for use in :meth:`~formtools.preview.FormPreview.done()`. -> позже для использования в: meth: `~ formtools.preview.FormPreview.done ()`.
+Атрибут or метод post_post    type - <class 'method'>
+ ->
+        Validates the POST data. If valid, calls done(). Else, redisplays form. -> Проверяет данные POST. Если действительно, вызывает done (). В противном случае повторно отображает форму.
+Атрибут or метод preview_get    type - <class 'method'>
+Displays the form -> Отображает форму
+Атрибут or метод preview_post    type - <class 'method'>
+ ->
+        Validates the POST data. If valid, displays the preview page. -> Проверяет данные POST. Если действительно, отображает страницу предварительного просмотра.
+        Else, redisplays form. -> В противном случае повторно отображает форму.
+Атрибут or метод preview_template    type - <class 'str'>
+str(object='') -> str -> стр (объект = '') -> стр.
+str(bytes_or_buffer[, encoding[, errors]]) -> str -> str (bytes_or_buffer [, кодировка [, ошибки]]) -> str
+ ->
+Create a new string object from the given object. If encoding or -> Создайте новый строковый объект из данного объекта. Если кодировка или
+errors is specified, then the object must expose a data buffer -> error, то объект должен предоставлять буфер данных
+that will be decoded using the given encoding and error handler. -> который будет декодирован с использованием заданной кодировки и обработчика ошибок.
+Otherwise, returns the result of object.__str__() (if defined) -> В противном случае возвращает результат объекта .__ str __ () (если определено)
+or repr(object). -> или repr (объект).
+encoding defaults to sys.getdefaultencoding(). -> кодировка по умолчанию sys.getdefaultencoding ().
+errors defaults to 'strict'. -> по умолчанию используется "строгий".
+Атрибут or метод process_preview    type - <class 'method'>
+ ->
+        Given a validated form, performs any extra processing before displaying -> Учитывая подтвержденную форму, выполняет любую дополнительную обработку перед отображением
+        the preview page, and saves any extra data in context. -> страницу предварительного просмотра и сохраняет любые дополнительные данные в контексте.
+ ->
+        By default, this method is empty.  It is called after the form is -> По умолчанию этот метод пуст. Он вызывается после того, как форма
+        validated, but before the context is modified with hash information -> проверено, но до того, как контекст будет изменен с помощью хеш-информации
+        and rendered. -> и рендеринг.
+Атрибут or метод security_hash    type - <class 'method'>
+ ->
+        Calculates the security hash for the given -> Вычисляет хэш безопасности для заданного
+        :class:`~django.http.HttpRequest` and :class:`~django.forms.Form` -> : class: `~ django.http.HttpRequest` и: class:` ~ django.forms.Form`
+        instances. -> экземпляры.
+ ->
+        Subclasses may want to take into account request-specific information, -> Подклассы могут захотеть принять во внимание информацию, специфичную для запроса,
+        such as the IP address. -> например IP-адрес.
+Атрибут or метод state    type - <class 'dict'>
+dict() -> new empty dictionary -> dict () -> новый пустой словарь
+dict(mapping) -> new dictionary initialized from a mapping object's -> dict (отображение) -> новый словарь, инициализированный из объекта отображения
+    (key, value) pairs -> (ключ, значение) пары
+dict(iterable) -> new dictionary initialized as if via: -> dict (iterable) -> новый словарь инициализирован, как если бы через:
+    d = {} -> d = {}
+    for k, v in iterable: -> для k, v в итерации:
+        d[k] = v -> d [k] = v
+dict(**kwargs) -> new dictionary initialized with the name=value pairs -> dict (** kwargs) -> новый словарь, инициализированный парами имя = значение
+    in the keyword argument list.  For example:  dict(one=1, two=2) -> в списке аргументов ключевого слова. Например: dict (один = 1, два = 2)
+Атрибут or метод unused_name    type - <class 'method'>
+ ->
+        Given a first-choice name, adds an underscore to the name until it -> Если имя выбрано первым, добавляет к имени подчеркивание, пока оно
+        reaches a name that isn't claimed by any field in the form. -> достигает имени, которое не заявлено ни в одном из полей формы.
+ ->
+        This is calculated rather than being hard-coded so that no field names -> Это вычисляется, а не жестко запрограммировано, поэтому имена полей
+        are off-limits for use in the form. -> запрещены для использования в форме.
