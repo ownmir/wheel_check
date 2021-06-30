@@ -41,3 +41,25 @@ Pile = [5, 8, 13, 27, 14]
 # rec(0, 0, 0)
 
 print(res)
+
+import array
+import itertools
+
+
+print("my")
+res = 200000
+mas = array.array('I', (90000,80000,80000,70000,60000,50000,60000,10000,25000,35000,90000,12000,50000,56700,23000,745258,40000,13000,15610,86000))
+# mas = array.array('I', (5, 8, 13, 27, 14))
+# mas = array.array('I', (5, 8, 8, 5))
+mas_sum = sum(mas)
+for i in range(1, len(mas)//2+1):
+    it = itertools.combinations(mas, i)
+    # print()
+    # print(i)
+    for el in it:
+        combination_sum = sum(el)
+        # print(el, end=': ')
+        if res > abs(combination_sum - mas_sum + combination_sum):
+            res = abs(combination_sum - mas_sum + combination_sum)
+        # combination_sum, mas_sum - combination_sum
+print(res)
